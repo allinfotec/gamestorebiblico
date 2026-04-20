@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer App Icon Background -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  
+  <!-- Central Majestic Glow -->
+  <circle cx="256" cy="256" r="220" fill="url(#glow)"/>
+  
+  <!-- The Crown of Judah -->
+  <path d="M 160 150 L 206 200 L 256 110 L 306 200 L 352 150 L 330 230 L 182 230 Z" fill="url(#gold)" stroke="#d97706" stroke-width="6" stroke-linejoin="round"/>
+  
+  <!-- Majestic Lion Mane (Geometric Layers) -->
+  <path d="M 256 220 L 380 270 L 340 400 L 256 460 L 172 400 L 132 270 Z" fill="#92400e" stroke="#78350f" stroke-width="4"/>
+  <path d="M 256 220 L 350 280 L 310 380 L 256 430 L 202 380 L 162 280 Z" fill="#b45309"/>
+  <path d="M 256 220 L 320 290 L 290 360 L 256 390 L 222 360 L 192 290 Z" fill="#d97706"/>
+  
+  <!-- Lion Face Structure -->
+  <path d="M 256 230 L 295 290 L 256 370 L 217 290 Z" fill="#fcd34d"/>
+  <path d="M 256 230 L 275 290 L 256 370 L 237 290 Z" fill="#fef3c7"/>
+  
+  <!-- Lion Nose and Snout -->
+  <path d="M 235 320 L 277 320 L 256 360 Z" fill="#451a03"/>
+  <path d="M 256 360 L 256 380" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Lion Eyes (Fierce and Wise) -->
+  <path d="M 225 285 L 245 295 L 225 300 Z" fill="#451a03"/>
+  <path d="M 287 285 L 267 295 L 287 300 Z" fill="#451a03"/>
+</svg>

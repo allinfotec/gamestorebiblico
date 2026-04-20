@@ -14,15 +14,15 @@ const games = [
     id: 1,
     title: "King David",
     subtitle: "Jogo da origem de davi 2D.",
-    img: "https://images.unsplash.com/photo-1533228100845-08145e054ba9?auto=format&fit=crop&q=80&w=400",
+    img: "https://images.unsplash.com/photo-1484591974057-265bb767ef71?auto=format&fit=crop&q=80&w=400", // Sheep on landscape
     color: "from-blue-600 to-purple-600",
-    action: "https://thekingdavid.netlify.app/"
+    action: "https://ais-dev-y73d54wnkuw2j76fdnnou4-111465990999.us-east1.run.app/"
   },
   {
     id: 2,
     title: "King David 3D",
     subtitle: "jogo da origem de davi 3D.",
-    img: "https://images.unsplash.com/photo-1510373022216-24ed4654ea22?auto=format&fit=crop&q=80&w=400",
+    img: "https://picsum.photos/seed/warrior-boy/400/600", // Fallback placeholder for young David
     color: "from-orange-500 to-red-600",
     action: "https://king-david3d.vercel.app/"
   },

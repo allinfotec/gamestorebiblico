@@ -5,7 +5,7 @@ const sequence = [
   "No princípio era o Verbo...",
   "E o Verbo estava com Deus...",
   "E o Verbo era Deus.",
-  "BÍBLIA SAGRADA"
+  "HERÓIS DA BÍBLIA"
 ];
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
@@ -56,9 +56,9 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
               initial={{ rotateY: 90 }}
               animate={{ rotateY: 0 }}
               transition={{ duration: 1, delay: 0.2, type: "spring", bounce: 0.4 }}
-              className="w-24 h-24 bg-white text-black rounded-3xl flex items-center justify-center text-5xl shadow-[0_0_60px_rgba(255,255,255,0.2)]"
+              className="w-40 h-40 rounded-[40px] overflow-hidden flex items-center justify-center shadow-[0_0_60px_rgba(255,255,255,0.2)]"
             >
-              📖
+              <img src="/leao.svg" alt="Heróis da Bíblia" className="w-full h-full object-cover" />
             </motion.div>
             <motion.div
                initial={{ opacity: 0, y: 10 }}
@@ -66,8 +66,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
                transition={{ duration: 0.8, delay: 0.8 }}
                className="flex flex-col items-center"
             >
-               <h1 className="text-3xl font-serif font-bold tracking-wider text-white mb-2 shadow-black drop-shadow-xl">{sequence[index]}</h1>
-               <span className="text-xs uppercase tracking-[0.3em] text-gray-500 font-bold">Online</span>
+               <h1 className="text-3xl font-serif font-bold tracking-wider text-white mb-2 shadow-black drop-shadow-xl">Heróis da Bíblia</h1>
             </motion.div>
           </motion.div>
         )}

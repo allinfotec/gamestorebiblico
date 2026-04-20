@@ -13,16 +13,16 @@ export default defineConfig(({mode}) => {
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          name: 'Bíblia Sagrada Online',
-          short_name: 'Bíblia',
-          description: 'Aplicativo de leitura da Bíblia Sagrada com auxílio de IA.',
-          theme_color: '#000000',
-          background_color: '#ffffff',
+          name: 'Heróis da Bíblia',
+          short_name: 'Heróis',
+          description: 'Game Store Heróis da Bíblia.',
+          theme_color: '#0a0a0c',
+          background_color: '#0a0a0c',
           display: 'standalone',
           icons: [
             {
-              src: 'icon.svg',
-              sizes: '192x192 512x512',
+              src: 'leao.svg',
+              sizes: '512x512',
               type: 'image/svg+xml',
               purpose: 'any maskable'
             }
