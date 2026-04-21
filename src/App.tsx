@@ -13,6 +13,7 @@ import { AIHub } from './pages/AIHub';
 import { Plan } from './pages/Plan';
 import { SplashScreen } from './components/SplashScreen';
 import { StoreFront } from './pages/StoreFront';
+import { WordOfTheDay } from './pages/WordOfTheDay';
 
 export default function App() {
   const { hydrate } = useAppStore();
@@ -38,6 +39,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<StoreFront />} />
+          <Route path="/word-of-the-day" element={<WordOfTheDay />} />
           
           <Route path="/bible" element={<Layout />}>
             <Route index element={<Home />} />

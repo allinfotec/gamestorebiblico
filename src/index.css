@@ -1,11 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&family=Georgia:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&family=Georgia:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400..900&family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
   --font-serif: "Georgia", ui-serif, serif;
+  --font-game: "Orbitron", sans-serif;
+  --font-pixel: "'Press Start 2P'", cursive;
   
   --color-natural-50: #fdfbf7;
   --color-natural-100: #f5f2ed;
@@ -16,41 +18,34 @@
   --color-natural-700: #5a544d;
   --color-natural-800: #5a5a40;
   --color-natural-900: #2c2925;
+  
+  --color-on-surface: #1b1c17;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e4e3db;
+  --color-on-surface-variant: #544246;
+  --color-primary: #4e0224;
+  --color-secondary-container: #fe9e66;
+  --color-outline-variant: #d9c0c5;
 }
 
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Avoid double scroll since we manage layout internally */
-}
-
-/* Fallback background for body outside the max-w-md */
 body {
-  background-color: var(--color-natural-100);
-  transition: background-color 0.3s;
+  background-color: #fbf9f1;
+  color: #1b1c17;
+  min-height: max(884px, 100dvh);
 }
 
-html.dark body {
-  background-color: #1a1917;
+.neumorphic-shadow {
+  box-shadow: 8px 8px 16px rgba(107, 27, 58, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.8);
 }
 
-html.dark {
-  color-scheme: dark;
+.organic-shape {
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
 }
 
-/* Hide scrollbar for clean app-like UI */
-::-webkit-scrollbar {
-  width: 4px;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-::-webkit-scrollbar-track {
-  background: transparent; 
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-natural-400); 
-  border-radius: 10px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: #3f3d38; 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

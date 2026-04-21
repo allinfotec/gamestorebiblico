@@ -56,9 +56,11 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
               initial={{ rotateY: 90 }}
               animate={{ rotateY: 0 }}
               transition={{ duration: 1, delay: 0.2, type: "spring", bounce: 0.4 }}
-              className="w-40 h-40 rounded-[40px] overflow-hidden flex items-center justify-center shadow-[0_0_60px_rgba(255,255,255,0.2)]"
+              className="relative w-48 h-48 rounded-[40px] overflow-hidden flex items-center justify-center p-1 bg-gradient-to-tr from-amber-500 via-yellow-300 to-orange-500 shadow-[0_0_60px_rgba(251,191,36,0.3)]"
             >
-              <img src="/leao.svg" alt="Heróis da Bíblia" className="w-full h-full object-cover" />
+              <div className="w-full h-full rounded-[36px] overflow-hidden bg-black">
+                <img src="https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&q=80&w=800" alt="Leão de Judá" className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
+              </div>
             </motion.div>
             <motion.div
                initial={{ opacity: 0, y: 10 }}
