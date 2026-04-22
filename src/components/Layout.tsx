@@ -14,9 +14,9 @@ export function Layout() {
   }, [isDarkMode]);
 
   return (
-    <div className="mx-auto w-full max-w-md h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col overflow-hidden relative shadow-2xl safe-area-bottom">
+    <div className="mx-auto w-full h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col overflow-hidden relative shadow-2xl safe-area-bottom">
       {/* Content */}
-      <main className="flex-1 overflow-y-auto relative z-0">
+      <main className="flex-1 overflow-y-auto relative z-0 no-scrollbar">
         <Outlet />
         {/* Spacer text to not get hidden behind floating pill */}
         <div className="h-[100px] shrink-0 w-full pointer-events-none" />

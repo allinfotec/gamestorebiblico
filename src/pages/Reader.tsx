@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useBible } from '../context/BibleContext';
 import { useAppStore } from '../store/useAppStore';
-import { ArrowLeft, ZoomIn, ZoomOut, Bot, Heart, Play, Share2, X, ChevronLeft, ChevronRight, Volume2, Square } from 'lucide-react';
+import { ArrowLeft, ZoomIn, ZoomOut, Bot, Heart, Play, Share2, Image as ImageIcon, X, ChevronLeft, ChevronRight, Volume2, Square } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { explainVerse } from '../services/aiService';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toPng } from 'html-to-image';
 
 export function Reader() {
   const { abbrev, chapterStr } = useParams<{ abbrev: string, chapterStr: string }>();
@@ -21,8 +22,16 @@ export function Reader() {
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isExplaining, setIsExplaining] = useState(false);
   const [speechStatus, setSpeechStatus] = useState<'idle' | 'playing'>('idle');
+  const [chapterInput, setChapterInput] = useState(chapterNum.toString());
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   
   const contentRef = useRef<HTMLDivElement>(null);
+  const verseImageRef = useRef<HTMLDivElement>(null);
+
+  // Sync internal input when url changes
+  useEffect(() => {
+    setChapterInput(chapterNum.toString());
+  }, [chapterNum]);
 
   // Scroll to top on chapter change and cancel speech
   useEffect(() => {
@@ -121,6 +130,49 @@ export function Reader() {
     }
   };
 
+  const handleShareImage = async () => {
+    if (selectedVerse === null || !verseImageRef.current) return;
+    setIsGeneratingImage(true);
+    
+    try {
+      // Small pause to ensure ref is completely rendered
+      await new Promise(r => setTimeout(r, 100));
+      const dataUrl = await toPng(verseImageRef.current, { cacheBust: true, pixelRatio: 2 });
+      
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], `versiculo_${abbrev}_${chapterNum}_${selectedVerse}.png`, { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Versículo',
+          files: [file],
+        });
+      } else {
+        // Fallback to download
+        const link = document.createElement('a');
+        link.download = file.name;
+        link.href = dataUrl;
+        link.click();
+      }
+    } catch (e) {
+      console.error('Error generating or sharing image', e);
+      alert('Não foi possível gerar a imagem.');
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const handleChapterJump = () => {
+    const parsed = parseInt(chapterInput, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= totalChapters) {
+      navigate(`/bible/read/${abbrev}/${parsed}`);
+    } else {
+      // Revert if invalid
+      setChapterInput(chapterNum.toString());
+    }
+  };
+
   const speakText = (text: string) => {
     window.speechSynthesis.cancel();
     if (!text) {
@@ -141,15 +193,51 @@ export function Reader() {
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-black transition-colors duration-300">
+      
+      {/* Hidden Div for Image Rendering */}
+      {selectedVerse !== null && (
+        <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+          <div 
+            ref={verseImageRef} 
+            className="w-[1080px] h-[1080px] bg-gradient-to-br from-rose-50 via-white to-orange-50 p-24 flex flex-col justify-center items-center text-center relative overflow-hidden"
+          >
+            <div className="absolute top-[-100px] right-[-100px] w-96 h-96 bg-rose-200/40 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-[-100px] left-[-100px] w-96 h-96 bg-orange-200/40 rounded-full blur-3xl"></div>
+            
+            <div className="z-10 bg-white/60 backdrop-blur-sm p-16 rounded-3xl border border-white shadow-xl flex flex-col items-center justify-center w-full h-full">
+              <span className="text-6xl text-rose-300 mb-8 opacity-50 font-serif">"</span>
+              <p className="text-4xl font-serif text-gray-800 leading-[1.6] px-8">
+                {chapterText[selectedVerse - 1]}
+              </p>
+              <div className="mt-16 w-16 h-1 bg-rose-300 rounded-full mb-8"></div>
+              <p className="text-2xl font-bold text-gray-600 uppercase tracking-widest">
+                {book.name} {chapterNum}:{selectedVerse}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="flex items-center justify-between px-4 h-16 border-b border-gray-100 dark:border-slate-800 bg-white/95 dark:bg-black/95 backdrop-blur-md sticky top-0 z-20 shrink-0 transition-colors duration-300 shadow-sm">
         <button onClick={() => navigate(`/bible/book/${abbrev}`)} className="p-2 -ml-2 text-black dark:text-white rounded-full hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors">
           <ArrowLeft size={24} />
         </button>
-        <h1 className="text-lg font-sans font-bold text-black dark:text-white tracking-wide">
-          {book.name} {chapterNum}
-        </h1>
-        <div className="flex gap-1">
+        <div className="flex items-center justify-center flex-1 mx-2">
+          <span className="text-lg font-sans font-bold text-black dark:text-white tracking-wide whitespace-nowrap">
+            {book.name}
+          </span>
+          <input 
+            type="number" 
+            inputMode="numeric"
+            value={chapterInput}
+            onChange={(e) => setChapterInput(e.target.value)}
+            onBlur={handleChapterJump}
+            onKeyDown={(e) => e.key === 'Enter' && handleChapterJump()}
+            className="w-14 ml-2 pl-2 pr-1 py-1 text-lg font-bold text-center bg-gray-100 dark:bg-slate-800 text-black dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+          />
+        </div>
+        <div className="flex gap-1 shrink-0">
           <button onClick={decreaseFont} className="p-2 text-black dark:text-gray-400 rounded-full hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors"><ZoomOut size={20} /></button>
           <button onClick={increaseFont} className="p-2 text-black dark:text-gray-400 rounded-full hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors"><ZoomIn size={20} /></button>
         </div>
@@ -240,20 +328,24 @@ export function Reader() {
                 "{chapterText[selectedVerse - 1]}"
               </p>
               
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
                  <button onClick={() => handleFavorite(selectedVerse)} className={`py-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-colors shadow-lg ${isFavorite(selectedVerse) ? 'bg-black text-white shadow-gray-500/60 dark:bg-white dark:text-black dark:shadow-gray-400/30' : 'bg-white border border-gray-200 text-black shadow-gray-400/60 dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:shadow-gray-400/30 hover:bg-gray-50 dark:hover:bg-slate-800'}`}>
                     <Heart size={20} className={isFavorite(selectedVerse) ? 'fill-white dark:fill-black' : ''} />
                     <span className="text-[11px] font-bold uppercase tracking-wider">{isFavorite(selectedVerse) ? 'Salvo' : 'Favoritar'}</span>
                  </button>
                  <button onClick={() => handleShare(selectedVerse)} className="py-3 bg-white border border-gray-200 text-black rounded-2xl flex flex-col items-center justify-center gap-1.5 dark:bg-slate-900 dark:border-slate-700 dark:text-white shadow-lg shadow-gray-400/60 dark:shadow-gray-400/30 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                     <Share2 size={20} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Enviar</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Texto</span>
+                 </button>
+                 <button onClick={handleShareImage} disabled={isGeneratingImage} className="py-3 bg-white border border-gray-200 text-black rounded-2xl flex flex-col items-center justify-center gap-1.5 dark:bg-slate-900 dark:border-slate-700 dark:text-white shadow-lg shadow-gray-400/60 dark:shadow-gray-400/30 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">
+                    <ImageIcon size={20} className={isGeneratingImage ? "animate-pulse" : ""} />
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Imagem</span>
                  </button>
                  <button onClick={() => speechStatus === 'playing' ? stopSpeech() : speakText(chapterText[selectedVerse - 1])} className="py-3 bg-white border border-gray-200 text-black rounded-2xl flex flex-col items-center justify-center gap-1.5 dark:bg-slate-900 dark:border-slate-700 dark:text-white shadow-lg shadow-gray-400/60 dark:shadow-gray-400/30 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                     {speechStatus === 'playing' ? <Square size={20} /> : <Volume2 size={20} />}
                     <span className="text-[11px] font-bold uppercase tracking-wider">{speechStatus === 'playing' ? 'Parar' : 'Ouvir Ler'}</span>
                  </button>
-                 <button onClick={handleExplain} className="py-3 bg-black hover:bg-gray-800 text-white rounded-2xl flex flex-col items-center justify-center gap-1.5 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors shadow-lg shadow-gray-500/60 dark:shadow-gray-400/30">
+                 <button onClick={handleExplain} className="col-span-2 md:col-span-1 py-3 bg-black hover:bg-gray-800 text-white rounded-2xl flex flex-col items-center justify-center gap-1.5 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors shadow-lg shadow-gray-500/60 dark:shadow-gray-400/30">
                     <Bot size={20} />
                     <span className="text-[11px] font-bold uppercase tracking-wider">Explicar</span>
                  </button>

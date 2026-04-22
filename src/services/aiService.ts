@@ -45,7 +45,7 @@ export async function suggestThematicVerses(theme: string): Promise<Array<{ refe
   if (!ai) throw new Error("API não configurada");
   const response = await ai.models.generateContent({
     model: "gemini-3.1-pro-preview",
-    contents: `Sugira 3 versículos bíblicos conhecidos que ajudem no tema: "${theme}". Retorne o resultado em JSON como um array de objetos, onde cada objeto tem os campos: reference, text.`,
+    contents: `Sugira 5 versículos bíblicos conhecidos que ajudem no tema: "${theme}". Retorne o resultado em JSON como um array de objetos, onde cada objeto tem os campos: reference, text.`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {

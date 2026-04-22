@@ -54,7 +54,7 @@ export function Search() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4">
+      <div className="flex-1 overflow-y-auto px-5 pb-36 pt-4">
         {query.length > 0 && query.length < 3 && (
           <p className="text-center text-gray-500 dark:text-gray-400 mt-8 font-medium">Digite pelo menos 3 caracteres...</p>
         )}

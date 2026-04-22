@@ -120,9 +120,9 @@ export function WordOfTheDay() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#020617] text-white">
+    <div className="mx-auto w-full h-screen bg-gradient-to-br from-[#0F172A] to-[#020617] text-white flex flex-col overflow-hidden relative safe-area-bottom">
       {/* Header */}
-      <header className="sticky top-0 z-50 px-6 h-16 flex items-center bg-white/5 backdrop-blur-md border-b border-white/10 shadow-sm">
+      <header className="shrink-0 px-6 h-16 flex items-center bg-white/5 backdrop-blur-md border-b border-white/10 shadow-sm z-50">
         <button onClick={() => navigate('/')} className="p-2 -ml-2 text-white/80 hover:text-white transition-colors">
           <ArrowLeft size={24} />
         </button>
@@ -131,7 +131,7 @@ export function WordOfTheDay() {
         </h1>
       </header>
 
-      <main className="px-6 py-8 max-w-lg mx-auto pb-24">
+      <main className="flex-1 overflow-y-auto no-scrollbar relative z-0 px-6 py-8 max-w-lg mx-auto w-full pb-48">
         {/* Daily/Random Verse Card */}
         <AnimatePresence mode="wait">
           {dailyVerse && (
@@ -141,20 +141,30 @@ export function WordOfTheDay() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="bg-white/5 backdrop-blur-md rounded-[24px] p-8 border border-white/20 shadow-[inset_0_2px_15px_rgba(255,255,255,0.1),_0_10px_30px_rgba(0,0,0,0.3)] mb-8 text-center"
+              className="relative overflow-hidden rounded-[24px] p-8 border border-white/20 shadow-[inset_0_2px_15px_rgba(255,255,255,0.3),_0_10px_30px_rgba(0,0,0,0.5)] mb-8 text-center"
             >
-              <h2 className="text-white/60 uppercase tracking-widest text-xs font-bold mb-6">Versículo em Destaque</h2>
-              <p className="text-2xl font-serif font-medium leading-relaxed mb-6 text-white/90 drop-shadow-md">
-                "{dailyVerse.text}"
-              </p>
-              <div className="flex items-center justify-center justify-between mt-8">
-                <span className="text-rose-300 font-semibold tracking-wide">
-                  {dailyVerse.book} {dailyVerse.chapter}:{dailyVerse.verse}
-                </span>
-                <div className="flex gap-3">
-                  <button onClick={() => handleShare(dailyVerse)} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-                    <Share2 size={18} className="text-white" />
-                  </button>
+              {/* Landscape Background */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center brightness-75 contrast-110"
+                style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=1200")' }}
+              />
+              {/* Gradient Overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#020617]/90 via-[#0F172A]/50 to-transparent mix-blend-multiply" />
+              
+              <div className="relative z-10">
+                <h2 className="text-white/90 uppercase tracking-widest text-xs font-bold mb-6 drop-shadow-md">Versículo em Destaque</h2>
+                <p className="text-2xl font-serif font-medium leading-relaxed mb-6 text-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">
+                  "{dailyVerse.text}"
+                </p>
+                <div className="flex items-center justify-between mt-8">
+                  <span className="text-rose-100 font-bold tracking-wide drop-shadow-md">
+                    {dailyVerse.book} {dailyVerse.chapter}:{dailyVerse.verse}
+                  </span>
+                  <div className="flex gap-3">
+                    <button onClick={() => handleShare(dailyVerse)} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 transition-colors shadow-lg">
+                      <Share2 size={18} className="text-white" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -222,6 +232,9 @@ export function WordOfTheDay() {
              </div>
           ) : null}
         </div>
+        
+        {/* Scroll Clearance Spacer */}
+        <div className="h-12 w-full shrink-0 pointer-events-none" />
 
       </main>
     </div>

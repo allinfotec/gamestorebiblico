@@ -91,7 +91,7 @@ export function Home() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-8 space-y-8">
+      <div className="flex-1 overflow-y-auto px-5 pb-36 space-y-8">
         {/* Reading Plan Card Banner */}
         <div className="pt-2">
           <Link to="/bible/plan" className="block group">
@@ -111,10 +111,10 @@ export function Home() {
 
         <section>
           <h2 className="text-base uppercase font-bold tracking-[0.15em] text-black dark:text-white mb-4 px-2">Antigo Testamento</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {vtBooks.map(book => (
               <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block">
-                <motion.div whileTap={{ scale: 0.95 }} className="p-4 flex flex-col justify-center bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-[0_2px_12px_rgb(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_24px_rgb(0,0,0,0.3)] transition-all duration-300 text-black dark:text-white">
+                <motion.div whileTap={{ scale: 0.95 }} className="h-full p-4 flex flex-col justify-center bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-[0_2px_12px_rgb(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_24px_rgb(0,0,0,0.3)] transition-all duration-300 text-black dark:text-white">
                   <h3 className="font-sans text-[15px] font-bold mb-1">{book.name}</h3>
                   <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500 dark:text-gray-400">{book.chapters.length} Capítulos</span>
                 </motion.div>
@@ -125,10 +125,10 @@ export function Home() {
 
         <section>
           <h2 className="text-base uppercase font-bold tracking-[0.15em] text-black dark:text-white mb-4 px-2">Novo Testamento</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {ntBooks.map(book => (
               <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block">
-                <motion.div whileTap={{ scale: 0.95 }} className="p-4 flex flex-col justify-center bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-[0_2px_12px_rgb(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_24px_rgb(0,0,0,0.3)] transition-all duration-300 text-black dark:text-white">
+                <motion.div whileTap={{ scale: 0.95 }} className="h-full p-4 flex flex-col justify-center bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-[0_2px_12px_rgb(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_24px_rgb(0,0,0,0.3)] transition-all duration-300 text-black dark:text-white">
                   <h3 className="font-sans text-[15px] font-bold mb-1">{book.name}</h3>
                   <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500 dark:text-gray-400">{book.chapters.length} Capítulos</span>
                 </motion.div>

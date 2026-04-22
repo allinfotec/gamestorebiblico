@@ -49,7 +49,7 @@ export function AIHub() {
         </p>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 py-8 space-y-10">
+      <div className="flex-1 overflow-y-auto px-5 pt-8 pb-36 space-y-10">
         
         {/* Devotional Card */}
         <section>
@@ -104,6 +104,31 @@ export function AIHub() {
           
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-gray-100 dark:border-slate-800">
              <p className="text-[14px] text-gray-600 dark:text-gray-400 mb-5 leading-relaxed">Como você está se sentindo? A IA sugere versículos sobre ansiedade, paz, amor...</p>
+             
+             {/* Pre-defined Theme Categories */}
+             <div className="flex flex-wrap gap-2 mb-5">
+               {['Ansiedade', 'Paz', 'Amor', 'Gratidão', 'Esperança', 'Força'].map((btnTheme) => (
+                 <button
+                   key={btnTheme}
+                   onClick={() => {
+                     setThemeInput(btnTheme);
+                     // Set timeout to ensure state update before fetching
+                     setTimeout(() => {
+                       setThemeLoading(true);
+                       setSuggestedVerses([]);
+                       suggestThematicVerses(btnTheme)
+                         .then(data => setSuggestedVerses(data))
+                         .catch(() => alert("Erro ao buscar tema."))
+                         .finally(() => setThemeLoading(false));
+                     }, 50);
+                   }}
+                   className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-semibold transition-colors border border-gray-200 dark:border-slate-700"
+                 >
+                   {btnTheme}
+                 </button>
+               ))}
+             </div>
+
              <div className="flex gap-2">
                 <input 
                    type="text" 

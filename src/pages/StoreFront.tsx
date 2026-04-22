@@ -67,35 +67,43 @@ export function StoreFront() {
   };
 
   return (
-    <div className="antialiased pb-24 relative overflow-x-hidden min-h-screen bg-gradient-to-br from-[#1C1F3A] to-[#121322]">
-      {/* TopAppBar */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#FFFDF5] shadow-sm">
-        <button className="text-[#6B1B3A] hover:opacity-80 transition-opacity">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <div className="text-xl font-black text-[#6B1B3A] font-sans tracking-tight">Game Store Bible</div>
-        <button 
-          onClick={() => {
-            const shareText = 'Deus abençoe sua vida, Nós ajude levar para mais pessoas!\nhttps://gamestorebiblico.netlify.app/';
-            if (navigator.share) {
-              navigator.share({
-                title: 'Game Store Bible',
-                text: 'Deus abençoe sua vida, Nós ajude levar para mais pessoas!',
-                url: 'https://gamestorebiblico.netlify.app/'
-              }).catch(console.error);
-            } else {
-              navigator.clipboard.writeText(shareText);
-              alert('Mensagem e link copiados!\n' + shareText);
-            }
-          }}
-          className="text-[#6B1B3A] hover:opacity-80 transition-opacity p-1"
-        >
-          <span className="material-symbols-outlined">share</span>
-        </button>
+    <div className="antialiased pb-24 relative overflow-x-hidden min-h-screen bg-gradient-to-br from-[#111326] to-[#090A14]">
+      {/* TopAppBar with Modern Wave */}
+      <header className="fixed top-0 left-0 w-full z-50 drop-shadow-[0_8px_16px_rgba(0,0,0,0.25)] flex flex-col backdrop-blur-md">
+        <div className="flex justify-between items-center px-6 h-24 pb-6 pt-2 bg-[#FFFDF5]/85">
+          <div className="w-10"></div> {/* Spacer to keep title centered */}
+          <div className="text-3xl sm:text-4xl font-black font-[Orbitron] tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-[#6B1B3A] via-[#91254A] to-[#D14D72] drop-shadow-sm">
+            Game Store Bible
+          </div>
+          <button 
+            onClick={() => {
+              const shareText = 'Deus abençoe sua vida, Nós ajude levar para mais pessoas!\nhttps://gamestorebiblico.netlify.app/';
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Game Store Bible',
+                  text: 'Deus abençoe sua vida, Nós ajude levar para mais pessoas!',
+                  url: 'https://gamestorebiblico.netlify.app/'
+                }).catch(console.error);
+              } else {
+                navigator.clipboard.writeText(shareText);
+                alert('Mensagem e link copiados!\n' + shareText);
+              }
+            }}
+            className="text-[#6B1B3A] hover:text-[#D14D72] hover:scale-110 active:scale-95 transition-all p-1"
+          >
+            <span className="material-symbols-outlined text-[34px] sm:text-[40px]">share</span>
+          </button>
+        </div>
+        {/* SVG Wave Divider */}
+        <div className="w-full relative pointer-events-none flex flex-col overflow-hidden">
+          <svg viewBox="0 0 1000 120" preserveAspectRatio="none" className="w-[200%] h-16 sm:h-24 block animate-wave" style={{ fill: "rgba(255, 253, 245, 0.85)" }}>
+            <path d="M 0,0 L 0,60 C 100,120 150,120 250,60 C 350,0 400,0 500,60 C 600,120 650,120 750,60 C 850,0 900,0 1000,60 L 1000,0 Z"></path>
+          </svg>
+        </div>
       </header>
 
       {/* Main Content */}
-      <main className="pt-24 px-6 max-w-lg mx-auto">
+      <main className="pt-40 sm:pt-48 px-6 w-full max-w-7xl mx-auto">
         {/* Hero Section */}
         <section className="relative mb-12">
           <div className="w-full h-72 organic-shape relative overflow-hidden flex items-center justify-center bg-white/5 backdrop-blur-md border border-white/20 shadow-[inset_0_2px_15px_rgba(255,255,255,0.3),_0_10px_30px_rgba(0,0,0,0.5)] perspective-[1000px]">
@@ -110,13 +118,13 @@ export function StoreFront() {
                 animate={{ rotateY: 0, opacity: 1 }}
                 exit={{ rotateY: -90, opacity: 0 }}
                 transition={{ duration: 0.6, type: 'spring', bounce: 0.2 }}
-                className="absolute inset-0 flex flex-col items-center justify-center px-6"
+                className="absolute inset-0 flex flex-col items-center justify-center px-3"
               >
                 {/* Main 3D Hero Image */}
-                <div className="w-40 h-40 bg-cover bg-center drop-shadow-[0_15px_15px_rgba(0,0,0,0.2)] mb-4 shrink-0 transition-all duration-300 pointer-events-none" style={{ backgroundImage: `url("${verses[currentBanner].img}")`, borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}>
+                <div className="w-48 h-48 bg-cover bg-center drop-shadow-[0_15px_15px_rgba(0,0,0,0.2)] mb-2 shrink-0 transition-all duration-300 pointer-events-none" style={{ backgroundImage: `url("${verses[currentBanner].img}")`, borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}>
                 </div>
                 {/* Text Verse */}
-                <p className="text-center text-white/90 font-serif font-medium text-sm drop-shadow-md leading-snug">
+                <p className="text-center text-white/90 font-serif font-medium text-[13px] drop-shadow-md leading-tight">
                   {verses[currentBanner].text}
                 </p>
               </motion.div>
@@ -135,16 +143,35 @@ export function StoreFront() {
         </section>
 
         {/* Product Grid Header */}
-        <div className="flex justify-between items-end mb-6">
+        <div className="flex justify-between items-center mb-6">
           <h2 className="text-[32px] leading-[1.2] font-bold text-white font-sans">Seleção</h2>
-          <button className="text-[14px] font-semibold text-gray-400"><br/></button>
+          
+          {/* Feedback / Idea Button */}
+          <button
+            onClick={() => {
+              const feedbackText = 'Olá! Tive uma ideia brilhante para melhorar o app Game Store Bible e seus jogos:\n\n[Escreva sua ideia aqui]\n\nBaixe o app e veja as novidades: https://gamestorebiblico.netlify.app/';
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Sugestão - Game Store Bible',
+                  text: feedbackText,
+                }).catch(console.error);
+              } else {
+                navigator.clipboard.writeText(feedbackText);
+                alert('Texto de feedback copiado!\nCole na sua rede social ou envie para nós.\n\n' + feedbackText);
+              }
+            }}
+            className="w-11 h-11 bg-white/10 hover:bg-[#D14D72]/80 backdrop-blur-md border border-white/30 rounded-[14px] flex items-center justify-center text-white shadow-lg transition-all active:scale-90"
+            title="Compartilhar Feedback ou Ideia"
+          >
+            <span className="material-symbols-outlined text-[26px]">lightbulb</span>
+          </button>
         </div>
 
         {/* Product Grid */}
         <section className="grid grid-cols-2 gap-4 pb-8">
           {games.map((g, index) => (
-            <div key={g.id} onClick={() => handleCardClick(g.action)} className={`bg-white/5 backdrop-blur-md rounded-[1rem] p-3 border border-white/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.2),_0_8px_20px_rgba(0,0,0,0.4)] flex flex-col cursor-pointer transition-transform hover:bg-white/10 active:scale-95 ${index % 2 !== 0 ? 'mt-8' : ''}`}>
-              <div className="w-full h-32 rounded-[1rem] overflow-hidden mb-3 bg-black/20">
+            <div key={g.id} onClick={() => handleCardClick(g.action)} className="bg-white/5 backdrop-blur-md rounded-[1rem] p-3 border border-white/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.2),_0_8px_20px_rgba(0,0,0,0.4)] flex flex-col h-full cursor-pointer transition-transform hover:bg-white/10 active:scale-95">
+              <div className="w-full h-32 rounded-[1rem] overflow-hidden mb-3 bg-black/20 shrink-0">
                 <img alt={g.title} className="w-full h-full object-cover" src={g.img} />
               </div>
               <h3 className="text-[14px] font-semibold text-white mb-1 truncate">{g.title}</h3>
