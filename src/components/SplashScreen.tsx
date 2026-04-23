@@ -5,7 +5,7 @@ const sequence = [
   "No princípio era o Verbo...",
   "E o Verbo estava com Deus...",
   "E o Verbo era Deus.",
-  "HERÓIS DA BÍBLIA"
+  "GAME STORE BIBLE"
 ];
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
@@ -56,10 +56,10 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
               initial={{ rotateY: 90 }}
               animate={{ rotateY: 0 }}
               transition={{ duration: 1, delay: 0.2, type: "spring", bounce: 0.4 }}
-              className="relative w-48 h-48 rounded-[40px] overflow-hidden flex items-center justify-center p-1 bg-gradient-to-tr from-amber-500 via-yellow-300 to-orange-500 shadow-[0_0_60px_rgba(251,191,36,0.3)]"
+              className="relative w-48 h-48 rounded-[40px] overflow-hidden flex items-center justify-center p-1 bg-gradient-to-tr from-[#91254A] via-[#D14D72] to-[#ffb1c6] shadow-[0_0_60px_rgba(209,77,114,0.4)]"
             >
               <div className="w-full h-full rounded-[36px] overflow-hidden bg-black">
-                <img src="https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&q=80&w=800" alt="Leão de Judá" className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
+                <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&q=80&w=800" alt="Game Store Bible" className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
               </div>
             </motion.div>
             <motion.div
@@ -68,7 +68,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
                transition={{ duration: 0.8, delay: 0.8 }}
                className="flex flex-col items-center"
             >
-               <h1 className="text-3xl font-serif font-bold tracking-wider text-white mb-2 shadow-black drop-shadow-xl">Heróis da Bíblia</h1>
+               <h1 className="text-3xl font-[Orbitron] font-bold tracking-wider text-white mb-2 shadow-black drop-shadow-xl">Game Store Bible</h1>
             </motion.div>
           </motion.div>
         )}
