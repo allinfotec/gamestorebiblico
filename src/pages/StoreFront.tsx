@@ -67,12 +67,12 @@ export function StoreFront() {
   };
 
   return (
-    <div className="antialiased pb-24 relative overflow-x-hidden min-h-screen bg-gradient-to-br from-[#111326] to-[#090A14]">
+    <div className="antialiased pb-24 relative overflow-x-hidden min-h-screen bg-gradient-to-br from-[#310A3B] via-[#0D0B1A] to-[#040209]">
       {/* TopAppBar with Modern Wave */}
       <header className="fixed top-0 left-0 w-full z-50 drop-shadow-[0_8px_16px_rgba(0,0,0,0.25)] flex flex-col backdrop-blur-md">
-        <div className="flex justify-between items-center px-6 h-24 pb-6 pt-2 bg-[#FFFDF5]/85">
+        <div className="flex justify-between items-center px-6 h-24 pb-6 pt-2 bg-white/80">
           <div className="w-10"></div> {/* Spacer to keep title centered */}
-          <div className="text-3xl sm:text-4xl font-black font-[Orbitron] tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-[#6B1B3A] via-[#91254A] to-[#D14D72] drop-shadow-sm">
+          <div className="text-3xl sm:text-4xl font-black font-[Orbitron] tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-[#2C0A18] via-[#4A1128] to-[#781B3B] drop-shadow-sm">
             Game Store Bible
           </div>
           <button 
@@ -96,7 +96,7 @@ export function StoreFront() {
         </div>
         {/* SVG Wave Divider */}
         <div className="w-full relative pointer-events-none flex flex-col overflow-hidden">
-          <svg viewBox="0 0 1000 120" preserveAspectRatio="none" className="w-[200%] h-16 sm:h-24 block animate-wave" style={{ fill: "rgba(255, 253, 245, 0.85)" }}>
+          <svg viewBox="0 0 1000 120" preserveAspectRatio="none" className="w-[200%] h-16 sm:h-24 block animate-wave" style={{ fill: "rgba(255, 255, 255, 0.80)" }}>
             <path d="M 0,0 L 0,60 C 100,120 150,120 250,60 C 350,0 400,0 500,60 C 600,120 650,120 750,60 C 850,0 900,0 1000,60 L 1000,0 Z"></path>
           </svg>
         </div>
@@ -106,7 +106,7 @@ export function StoreFront() {
       <main className="pt-40 sm:pt-48 px-6 w-full max-w-7xl mx-auto">
         {/* Hero Section */}
         <section className="relative mb-12">
-          <div className="w-full h-72 organic-shape relative overflow-hidden flex items-center justify-center bg-white/5 backdrop-blur-md border border-white/20 shadow-[inset_0_2px_15px_rgba(255,255,255,0.3),_0_10px_30px_rgba(0,0,0,0.5)] perspective-[1000px]">
+          <div className="w-full h-80 organic-shape relative overflow-hidden flex items-center justify-center bg-white/20 backdrop-blur-md border-2 border-white shadow-[inset_0_2px_15px_rgba(255,255,255,0.3),_0_0_25px_rgba(255,255,255,0.5)] perspective-[1000px]">
             {/* Decorative Elements */}
             <div className="absolute top-4 left-8 w-6 h-6 bg-rose-900/10 rounded-full blur-[2px] z-0"></div>
             <div className="absolute bottom-8 right-12 w-8 h-8 bg-rose-900/10 rounded-full blur-[4px] z-0"></div>
@@ -118,13 +118,17 @@ export function StoreFront() {
                 animate={{ rotateY: 0, opacity: 1 }}
                 exit={{ rotateY: -90, opacity: 0 }}
                 transition={{ duration: 0.6, type: 'spring', bounce: 0.2 }}
-                className="absolute inset-0 flex flex-col items-center justify-center px-3"
+                className="absolute inset-0 flex flex-col items-center justify-center px-4"
               >
-                {/* Main 3D Hero Image */}
-                <div className="w-48 h-48 bg-cover bg-center drop-shadow-[0_15px_15px_rgba(0,0,0,0.2)] mb-2 shrink-0 transition-all duration-300 pointer-events-none" style={{ backgroundImage: `url("${verses[currentBanner].img}")`, borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}>
-                </div>
+                {/* Main 3D Hero Image (Floating) */}
+                <motion.div 
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                  className="w-56 h-56 md:w-60 md:h-60 bg-cover bg-center drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] mb-4 shrink-0 pointer-events-none" 
+                  style={{ backgroundImage: `url("${verses[currentBanner].img}")`, borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }}
+                />
                 {/* Text Verse */}
-                <p className="text-center text-white/90 font-serif font-medium text-[13px] drop-shadow-md leading-tight">
+                <p className="text-center text-white/95 font-serif font-medium text-[14px] md:text-[15px] drop-shadow-md leading-relaxed px-2">
                   {verses[currentBanner].text}
                 </p>
               </motion.div>
@@ -170,7 +174,7 @@ export function StoreFront() {
         {/* Product Grid */}
         <section className="grid grid-cols-2 gap-4 pb-8">
           {games.map((g, index) => (
-            <div key={g.id} onClick={() => handleCardClick(g.action)} className="bg-white/5 backdrop-blur-md rounded-[1rem] p-3 border border-white/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.2),_0_8px_20px_rgba(0,0,0,0.4)] flex flex-col h-full cursor-pointer transition-transform hover:bg-white/10 active:scale-95">
+            <div key={g.id} onClick={() => handleCardClick(g.action)} className="bg-white/5 backdrop-blur-md rounded-[1rem] p-3 border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.4)] flex flex-col h-full cursor-pointer transition-transform hover:bg-white/10 active:scale-95 hover:shadow-[0_0_25px_rgba(255,255,255,0.6)]">
               <div className="w-full h-32 rounded-[1rem] overflow-hidden mb-3 bg-black/20 shrink-0">
                 <img alt={g.title} className="w-full h-full object-cover" src={g.img} />
               </div>
