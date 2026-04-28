@@ -59,7 +59,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
               className="relative w-48 h-48 rounded-[40px] overflow-hidden flex items-center justify-center p-1 bg-gradient-to-tr from-[#91254A] via-[#D14D72] to-[#ffb1c6] shadow-[0_0_60px_rgba(209,77,114,0.4)]"
             >
               <div className="w-full h-full rounded-[36px] overflow-hidden bg-black">
-                <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&q=80&w=800" alt="Game Store Bible" className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
+                <img src="https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg" alt="Game Store Bible" className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
               </div>
             </motion.div>
             <motion.div
