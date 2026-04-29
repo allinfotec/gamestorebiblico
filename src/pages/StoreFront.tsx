@@ -99,11 +99,11 @@ export function StoreFront() {
           <div className="flex gap-2 sm:gap-3 shrink-0">
             <button 
               onClick={shareIdea}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/90 hover:bg-white/10 transition-colors shadow-lg"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white flex items-center justify-center text-white/90 hover:bg-white/10 transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
             >
               <Lightbulb size={18} className="sm:w-5 sm:h-5" />
             </button>
-            <button className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/90 hover:bg-white/10 transition-colors shadow-lg">
+            <button className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white flex items-center justify-center text-white/90 hover:bg-white/10 transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
               <Bell size={18} className="sm:w-5 sm:h-5" />
               <span className="absolute top-2 right-2 sm:top-3 sm:right-3 w-2.5 h-2.5 bg-[#4ADE80] border-[2px] border-[#071810] rounded-full"></span>
             </button>
@@ -165,7 +165,7 @@ export function StoreFront() {
                   <div 
                     key={g.id} 
                     onClick={() => handleCardClick(g.action)} 
-                    className="col-span-1 flex-col group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] p-3.5 flex gap-4 cursor-pointer transition-all duration-300 hover:bg-white/10 shadow-[0_8px_20px_rgba(0,0,0,0.15)] active:scale-[0.97]"
+                    className="col-span-1 flex-col group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] p-3.5 flex gap-4 cursor-pointer transition-all duration-300 hover:bg-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.6)] active:scale-[0.97]"
                   >
                     {/* Card Image */}
                     <div className="w-full h-[140px] rounded-[20px] overflow-hidden shrink-0 bg-[#0A1A12] relative">
@@ -189,7 +189,7 @@ export function StoreFront() {
                       <div className="flex justify-between items-center mt-auto">
                         <div /> {/* Spacer for small cards if rating is overlay */}
                         
-                        <button className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center group-hover:bg-[#4ADE80] group-hover:text-[#071810] transition-colors">
+                        <button className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center border border-white group-hover:bg-[#4ADE80] group-hover:border-[#4ADE80] group-hover:text-[#071810] transition-colors">
                           <ChevronRight size={16} strokeWidth={2.5} />
                         </button>
                       </div>
