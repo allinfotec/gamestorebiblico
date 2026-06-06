@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { BibleProvider } from './context/BibleContext';
 import { useAppStore } from './store/useAppStore';
+import { useCacaPalavrasStore } from './store/useCacaPalavrasStore';
 
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
@@ -14,15 +15,17 @@ import { Plan } from './pages/Plan';
 import { SplashScreen } from './components/SplashScreen';
 import { StoreFront } from './pages/StoreFront';
 import { WordOfTheDay } from './pages/WordOfTheDay';
+import { CacaPalavras } from './pages/CacaPalavras';
 
 export default function App() {
-  const { hydrate } = useAppStore();
+  const { hydrate: hydrateApp } = useAppStore();
+  const { hydrate: hydrateCacaPalavras } = useCacaPalavrasStore();
   const [isHydrated, setIsHydrated] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    hydrate().then(() => setIsHydrated(true));
-  }, [hydrate]);
+    Promise.all([hydrateApp(), hydrateCacaPalavras()]).then(() => setIsHydrated(true));
+  }, [hydrateApp, hydrateCacaPalavras]);
 
   // Show splash screen while hydrating or animating
   if (showSplash) {
@@ -40,6 +43,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<StoreFront />} />
           <Route path="/word-of-the-day" element={<WordOfTheDay />} />
+          <Route path="/caca-palavras" element={<CacaPalavras />} />
           
           <Route path="/bible" element={<Layout />}>
             <Route index element={<Home />} />

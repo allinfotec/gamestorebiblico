@@ -9,12 +9,12 @@ export function Layout() {
   useEffect(() => {
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', isDarkMode ? '#000000' : '#ffffff');
+      metaThemeColor.setAttribute('content', '#0B1220');
     }
   }, [isDarkMode]);
 
   return (
-    <div className="mx-auto w-full h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col overflow-hidden relative shadow-2xl safe-area-bottom">
+    <div className="mx-auto w-full h-screen bg-brand-bg text-text-main flex flex-col overflow-hidden relative shadow-2xl safe-area-bottom">
       {/* Content */}
       <main className="flex-1 overflow-y-auto relative z-0 no-scrollbar">
         <Outlet />
@@ -24,11 +24,11 @@ export function Layout() {
 
       {/* Floating Bottom Nav */}
       <div className="absolute bottom-6 left-4 right-4 z-50 pointer-events-none pb-safe">
-         <nav className="pointer-events-auto h-[72px] bg-white/70 dark:bg-[#121214]/70 backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-center justify-around px-2 overflow-hidden transition-all duration-300">
-          <NavItem to="/bible" icon={<Book size={24} />} label="Bíblia" />
-          <NavItem to="/bible/search" icon={<Search size={24} />} label="Buscar" />
-          <NavItem to="/bible/favorites" icon={<Heart size={24} />} label="Favoritos" />
-          <NavItem to="/bible/ai-hub" icon={<Sparkles size={24} />} label="IA" />
+         <nav className="pointer-events-auto h-[76px] bg-brand-card/90 backdrop-blur-2xl border border-white/10 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center justify-around px-3 overflow-hidden transition-all duration-300">
+          <NavItem to="/bible" icon={<Book size={22} />} label="Bíblia" />
+          <NavItem to="/bible/search" icon={<Search size={22} />} label="Buscar" />
+          <NavItem to="/bible/favorites" icon={<Heart size={22} />} label="Favoritos" />
+          <NavItem to="/bible/ai-hub" icon={<Sparkles size={22} />} label="IA" />
         </nav>
       </div>
     </div>
@@ -40,15 +40,17 @@ function NavItem({ to, icon, label }: { to: string, icon: ReactNode, label: stri
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-300 transform ${
+        `relative flex flex-col items-center justify-center py-2 px-4 rounded-2xl transition-all duration-300 transform active:scale-95 ${
           isActive 
-            ? 'text-black dark:text-white font-bold scale-110 drop-shadow-md dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]' 
-            : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-gray-200 hover:scale-105'
+            ? 'text-brand-primary font-bold bg-brand-primary/15 scale-105 drop-shadow-[0_0_12px_rgba(59,130,246,0.3)]' 
+            : 'text-text-muted hover:text-white hover:bg-white/5'
         }`
       }
     >
-      {icon}
-      <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
+      <div className="flex flex-col items-center gap-1">
+        {icon}
+        <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
+      </div>
     </NavLink>
   );
 }

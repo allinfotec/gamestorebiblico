@@ -9,6 +9,14 @@
   --font-game: "Orbitron", sans-serif;
   --font-pixel: "'Press Start 2P'", cursive;
   
+  --color-brand-bg: #0B1220;
+  --color-brand-card: #172033;
+  --color-brand-primary: #3B82F6;
+  --color-brand-highlight: #F59E0B;
+  --color-brand-success: #22C55E;
+  --color-text-main: #FFFFFF;
+  --color-text-muted: #94A3B8;
+
   --color-natural-50: #fdfbf7;
   --color-natural-100: #f5f2ed;
   --color-natural-200: #ebe7e0;
@@ -29,8 +37,8 @@
 }
 
 body {
-  background-color: #fbf9f1;
-  color: #1b1c17;
+  background-color: #0B1220;
+  color: #FFFFFF;
   min-height: max(884px, 100dvh);
 }
 
@@ -66,4 +74,13 @@ body {
 
 .animate-wave {
   animation: wave-slide 10s linear infinite;
+}
+
+button {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
+  transition: box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out;
+}
+
+button:hover {
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.38);
 }

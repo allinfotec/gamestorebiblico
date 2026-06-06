@@ -22,9 +22,21 @@ export default defineConfig(({mode}) => {
           icons: [
             {
               src: 'https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg',
+              sizes: '192x192',
+              type: 'image/jpeg',
+              purpose: 'any'
+            },
+            {
+              src: 'https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg',
               sizes: '512x512',
               type: 'image/jpeg',
-              purpose: 'any maskable'
+              purpose: 'any'
+            },
+            {
+              src: 'https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg',
+              sizes: '512x512',
+              type: 'image/jpeg',
+              purpose: 'maskable'
             }
           ]
         }
