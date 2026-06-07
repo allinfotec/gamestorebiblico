@@ -40,6 +40,37 @@ export function StoreFront() {
   const [currentDate, setCurrentDate] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [motivationalMessage, setMotivationalMessage] = useState('');
+
+  const getFontSizeCls = (baseTextClass: string) => {
+    if (fontSize === 14) {
+      if (baseTextClass === 'text-xs') return 'text-[11px]';
+      if (baseTextClass === 'text-sm') return 'text-xs';
+      if (baseTextClass === 'text-base') return 'text-sm';
+      if (baseTextClass === 'text-lg') return 'text-base';
+      if (baseTextClass === 'text-xl') return 'text-lg';
+      if (baseTextClass === 'text-2xl') return 'text-xl';
+      if (baseTextClass === 'text-[11px]') return 'text-[9.5px]';
+      if (baseTextClass === 'text-[12.5px]') return 'text-[11px]';
+      if (baseTextClass === 'text-[13.5px]') return 'text-[12px]';
+      if (baseTextClass === 'text-[14.5px]') return 'text-xs';
+      if (baseTextClass === 'text-[15px]') return 'text-sm';
+      if (baseTextClass === 'text-[10px]') return 'text-[9px]';
+    } else if (fontSize === 22) {
+      if (baseTextClass === 'text-xs') return 'text-sm';
+      if (baseTextClass === 'text-sm') return 'text-base';
+      if (baseTextClass === 'text-base') return 'text-lg';
+      if (baseTextClass === 'text-lg') return 'text-xl';
+      if (baseTextClass === 'text-xl') return 'text-2xl';
+      if (baseTextClass === 'text-2xl') return 'text-3xl';
+      if (baseTextClass === 'text-[11px]') return 'text-xs';
+      if (baseTextClass === 'text-[12.5px]') return 'text-sm';
+      if (baseTextClass === 'text-[13.5px]') return 'text-[15px]';
+      if (baseTextClass === 'text-[14.5px]') return 'text-base';
+      if (baseTextClass === 'text-[15px]') return 'text-lg';
+      if (baseTextClass === 'text-[10px]') return 'text-[11px]';
+    }
+    return baseTextClass;
+  };
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -196,9 +227,9 @@ export function StoreFront() {
               <span className={`absolute bottom-0 right-0 w-3 h-3 bg-[#22C55E] border-2 rounded-full transition-colors duration-500 ${isDarkMode ? 'border-[#0B1220]' : 'border-white'}`}></span>
             </div>
             <div className="flex flex-col min-w-0">
-              <span className={`text-[10px] uppercase tracking-wider font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>{currentDate}</span>
-              <h2 className={`text-[15px] font-extrabold tracking-tight leading-tight transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{greeting}</h2>
-              <p className={`text-[10px] font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{motivationalMessage}</p>
+              <span className={`${getFontSizeCls('text-[10px]')} uppercase tracking-wider font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>{currentDate}</span>
+              <h2 className={`${getFontSizeCls('text-[15px]')} font-extrabold tracking-tight leading-tight transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{greeting}</h2>
+              <p className={`${getFontSizeCls('text-[10px]')} font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{motivationalMessage}</p>
             </div>
           </div>
           
@@ -362,21 +393,21 @@ export function StoreFront() {
               
               <div className="flex items-center gap-2">
                 <div className={`p-2 rounded-full border transition-all duration-500 ${
-                  isDarkMode ? 'bg-[#F59E0B]/10 border-[#F59E0B]/25 text-[#F59E0B]' : 'bg-amber-55 border-amber-200 text-amber-600'
+                  isDarkMode ? 'bg-[#F59E0B]/10 border-[#F59E0B]/25 text-[#F59E0B]' : 'bg-amber-50 border-amber-200 text-amber-600'
                 }`}>
                   <Leaf size={16} />
                 </div>
-                <span className={`text-xs font-extrabold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-850'}`}>Sabedoria Diária</span>
+                <span className={`${getFontSizeCls('text-xs')} font-extrabold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Sabedoria Diária</span>
               </div>
               
-              <p className={`text-sm font-bold italic leading-relaxed z-10 max-w-[70%] transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>
+              <p className={`${getFontSizeCls('text-sm')} font-bold italic leading-relaxed z-10 max-w-[70%] transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>
                 "Lâmpada para os meus pés é tua palavra e luz, para o meu caminho."
               </p>
-              <span className={`text-xs font-extrabold z-10 transition-colors duration-500 ${isDarkMode ? 'text-[#F59E0B]' : 'text-amber-600'}`}>— Salmos 119:105</span>
+              <span className={`${getFontSizeCls('text-xs')} font-extrabold z-10 transition-colors duration-500 ${isDarkMode ? 'text-[#F59E0B]' : 'text-amber-600'}`}>— Salmos 119:105</span>
               
               <div className={`flex justify-between items-center mt-2 pt-2 border-t transition-colors duration-500 ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
-                <span className={`text-[10px] font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Toque para ouvir e estudar</span>
-                <span className={`text-[10px] font-bold flex items-center gap-0.5 group-hover:underline transition-colors duration-500 ${isDarkMode ? 'text-[#3B82F6]' : 'text-blue-600'}`}>
+                <span className={`${getFontSizeCls('text-[10px]')} font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Toque para ouvir e estudar</span>
+                <span className={`${getFontSizeCls('text-[10px]')} font-bold flex items-center gap-0.5 group-hover:underline transition-colors duration-500 ${isDarkMode ? 'text-[#3B82F6]' : 'text-blue-600'}`}>
                   Acessar <ChevronRight size={10} />
                 </span>
               </div>
@@ -410,18 +441,18 @@ export function StoreFront() {
                   <span className={`px-2 py-0.5 text-[8px] font-black uppercase rounded-md tracking-widest animate-pulse ${
                     isDarkMode ? 'bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#F59E0B]' : 'bg-amber-50 border border-amber-200 text-amber-600'
                   }`}>NOVO</span>
-                  <span className={`text-[10px] font-bold transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>Jogo Exclusivo</span>
+                  <span className={`${getFontSizeCls('text-[10px]')} font-bold transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>Jogo Exclusivo</span>
                 </div>
                 
-                <h3 className={`text-lg font-black tracking-tight flex items-center gap-1.5 transition-colors duration-500 group-hover:text-[#3B82F6] ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+                <h3 className={`${getFontSizeCls('text-lg')} font-black tracking-tight flex items-center gap-1.5 transition-colors duration-500 group-hover:text-[#3B82F6] ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
                   Caça-Palavras 🔎
                 </h3>
-                <p className={`text-[11px] font-semibold leading-relaxed mt-1 mb-4 pr-4 transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>
+                <p className={`${getFontSizeCls('text-[11px]')} font-semibold leading-relaxed mt-1 mb-4 pr-4 transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>
                   Encontre palavras sagradas ocultas, complete desafios e desvende novos mundos!
                 </p>
 
                 <div className="space-y-1.5 max-w-xs">
-                  <div className={`flex justify-between text-[9px] font-bold tracking-wider uppercase transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>
+                  <div className={`flex justify-between ${getFontSizeCls('text-[10px]')} font-bold tracking-wider uppercase transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>
                     <span>Fases Concluídas</span>
                     <span className={`font-black ${isDarkMode ? 'text-[#F59E0B]' : 'text-amber-600'}`}>{completedCount} / 50</span>
                   </div>
@@ -458,7 +489,7 @@ export function StoreFront() {
                   className={`border rounded-[20px] p-3.5 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[155px] active:scale-[0.96] group relative overflow-hidden animate-neon-blue-green ${
                     isDarkMode 
                       ? 'bg-[#172033]/70 hover:bg-[#172033] border-[#3B82F6]/30 text-white' 
-                      : 'bg-white hover:bg-slate-50 border-blue-200/50 text-slate-850 shadow-[0_8px_20px_rgba(0,0,0,0.02)]'
+                      : 'bg-white hover:bg-slate-50 border-blue-200/50 text-slate-800 shadow-[0_8px_20px_rgba(0,0,0,0.02)]'
                   }`}
                 >
                   <div className={`absolute top-2 right-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded scale-90 z-10 border transition-all duration-500 ${
@@ -479,8 +510,8 @@ export function StoreFront() {
                       <img src={g.img} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" alt={g.title} />
                     </div>
 
-                    <h3 className={`font-extrabold text-[13.5px] tracking-tight truncate leading-tight transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{g.title}</h3>
-                    <p className={`text-[10px] leading-snug line-clamp-2 mt-1 transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>
+                    <h3 className={`font-extrabold ${getFontSizeCls('text-[13.5px]')} tracking-tight truncate leading-tight transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{g.title}</h3>
+                    <p className={`${getFontSizeCls('text-[10px]')} leading-snug line-clamp-2 mt-1 transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>
                       {g.subtitle}
                     </p>
                   </div>
@@ -511,7 +542,7 @@ export function StoreFront() {
                   title: 'Bíblia Offline 📖', 
                   subtitle: 'Leia todos os livros da Bíblia de forma fluida.', 
                   colorDark: 'from-blue-600/20 to-blue-900/10 border-blue-500/20',
-                  colorLight: 'from-blue-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-blue-500/20',
+                  colorLight: 'from-blue-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-blue-500/20',
                   badge: 'Offline',
                   image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=150'
                 },
@@ -520,7 +551,7 @@ export function StoreFront() {
                   title: 'Caça-Palavras 🎮', 
                   subtitle: 'Desafios enriquecedores com recompensas bíblicas.', 
                   colorDark: 'from-amber-600/20 to-amber-900/10 border-amber-500/20',
-                  colorLight: 'from-amber-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-amber-500/20',
+                  colorLight: 'from-amber-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-amber-500/20',
                   badge: 'Fases',
                   image: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=150'
                 },
@@ -529,7 +560,7 @@ export function StoreFront() {
                   title: 'Quiz Bíblico 🧠', 
                   subtitle: 'Incrível teste para aferir seus conhecimentos.', 
                   colorDark: 'from-purple-600/20 to-purple-900/10 border-purple-500/20',
-                  colorLight: 'from-purple-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-purple-500/20',
+                  colorLight: 'from-purple-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-purple-500/20',
                   badge: 'Quiz',
                   image: 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&q=80&w=150'
                 },
@@ -537,8 +568,8 @@ export function StoreFront() {
                   id: 'plan', 
                   title: 'Plano de Leitura 📚', 
                   subtitle: 'Acompanhe seu progresso de leitura em tempo real.', 
-                  colorDark: 'from-emerald-600/20 to-emerald-900/10 border-emerald-500/20',
-                  colorLight: 'from-emerald-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-emerald-500/20',
+                  colorDark: 'from-emerald-600/20 to-emerald-950/10 border-emerald-500/20',
+                  colorLight: 'from-emerald-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-emerald-500/20',
                   badge: 'Metas',
                   image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=150'
                 },
@@ -547,7 +578,7 @@ export function StoreFront() {
                   title: 'Favoritos ⭐', 
                   subtitle: 'Consulte seus versículos salvos de forma rápida.', 
                   colorDark: 'from-pink-600/20 to-pink-900/10 border-pink-500/20',
-                  colorLight: 'from-pink-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-pink-500/20',
+                  colorLight: 'from-pink-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-pink-500/20',
                   badge: 'Salvos',
                   image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&q=80&w=150'
                 },
@@ -556,7 +587,7 @@ export function StoreFront() {
                   title: 'Assistente Bíblico IA 🤖', 
                   subtitle: 'Explicações e estudos detalhados com inteligência.', 
                   colorDark: 'from-cyan-600/20 to-cyan-900/10 border-cyan-500/20',
-                  colorLight: 'from-cyan-50/20 to-slate-50/10 border-slate-150 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-cyan-500/20',
+                  colorLight: 'from-cyan-50/20 to-slate-50/10 border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:border-cyan-500/20',
                   badge: 'Inteligente',
                   image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=150'
                 }
@@ -575,12 +606,12 @@ export function StoreFront() {
                     />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <h4 className={`text-sm font-extrabold tracking-tight truncate transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-805'}`}>{item.title}</h4>
+                        <h4 className={`${getFontSizeCls('text-sm')} font-extrabold tracking-tight truncate transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{item.title}</h4>
                         <span className={`px-1.5 py-0.5 text-[8px] font-bold rounded tracking-wider font-mono transition-colors duration-500 ${isDarkMode ? 'bg-white/5 text-white/70' : 'bg-slate-100 text-slate-500'}`}>
                           {item.badge}
                         </span>
                       </div>
-                      <p className={`text-[11px] font-semibold leading-relaxed truncate transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-550'}`}>{item.subtitle}</p>
+                      <p className={`${getFontSizeCls('text-[11px]')} font-semibold leading-relaxed truncate transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{item.subtitle}</p>
                     </div>
                   </div>
                   <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-500 ${
@@ -857,7 +888,7 @@ export function StoreFront() {
                 
                 {/* Profile Header Spot */}
                 <div className={`border p-4 rounded-2xl flex items-center gap-3.5 shadow-inner transition-colors duration-500 ${
-                  isDarkMode ? 'bg-[#172033]/60 border-white/5' : 'bg-slate-50 border-slate-150'
+                  isDarkMode ? 'bg-[#172033]/60 border-white/5' : 'bg-slate-50 border-slate-200'
                 }`}>
                   <img 
                     src="https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg" 
@@ -909,9 +940,9 @@ export function StoreFront() {
                 <div className="space-y-2.5">
                   <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Tamanho do Texto</span>
                   <div className={`flex items-center justify-between gap-4 p-3.5 border rounded-2xl transition-colors duration-500 ${
-                    isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-55 border-slate-150'
+                    isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'
                   }`}>
-                    <span className={`text-xs font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-550'}`}>Leitor de capítulos</span>
+                    <span className={`text-xs font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Leitor de capítulos</span>
                     <div className="flex gap-1.5">
                       {[14, 18, 22].map((size) => (
                         <button
@@ -923,7 +954,7 @@ export function StoreFront() {
                           className={`w-10 h-10 rounded-xl border text-xs font-bold flex items-center justify-center transition-all ${
                             fontSize === size 
                               ? 'bg-[#F59E0B] border-[#F59E0B] text-white shadow-md' 
-                              : isDarkMode ? 'bg-white/5 border-white/5 text-[#94A3B8] hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-605 hover:bg-slate-200/40'
+                              : isDarkMode ? 'bg-white/5 border-white/5 text-[#94A3B8] hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200/40'
                           }`}
                         >
                           {size === 14 ? 'A-' : size === 18 ? 'A' : 'A+'}
@@ -937,9 +968,9 @@ export function StoreFront() {
                 <div className="space-y-2.5">
                   <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Visual do Aplicativo</span>
                   <div className={`flex items-center justify-between p-3.5 border rounded-2xl transition-all duration-500 ${
-                    isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-55 border-slate-150'
+                    isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'
                   }`}>
-                    <span className={`text-xs font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-550'}`}>Esquema de Cores</span>
+                    <span className={`text-xs font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Esquema de Cores</span>
                     <button
                       onClick={() => {
                         toggleDarkMode();
@@ -965,7 +996,7 @@ export function StoreFront() {
                 </div>
 
                 {/* Section D: Game parameters control & resetting action */}
-                <div className={`pt-2 border-t space-y-3.5 transition-colors duration-500 ${isDarkMode ? 'border-white/5' : 'border-slate-150'}`}>
+                <div className={`pt-2 border-t space-y-3.5 transition-colors duration-500 ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
                   <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>Ações de Segurança</span>
                   
                   {!showResetConfirmation ? (
