@@ -74,6 +74,8 @@ interface CacaPalavrasState extends CacaPalavrasProgress {
   completePhase: (phaseId: string, worldId: number, wordsFoundCount: number) => { newAchievements: Achievement[] };
   resetProgress: () => Promise<void>;
   hydrate: () => Promise<void>;
+  spendCoins: (amount: number) => Promise<boolean>;
+  addCoins: (amount: number) => Promise<void>;
 }
 
 export const useCacaPalavrasStore = create<CacaPalavrasState>((set, get) => ({
@@ -83,6 +85,38 @@ export const useCacaPalavrasStore = create<CacaPalavrasState>((set, get) => ({
   stars: 0,
   unlockedAchievements: [],
   isHydrated: false,
+
+  spendCoins: async (amount) => {
+    const { coins, completedPhases, xp, stars, unlockedAchievements } = get();
+    if (coins < amount) return false;
+    const nextCoins = coins - amount;
+    set({ coins: nextCoins });
+    
+    const updatedState = {
+      completedPhases,
+      xp,
+      coins: nextCoins,
+      stars,
+      unlockedAchievements
+    };
+    await localforage.setItem('app_cacapalavras_progress', updatedState);
+    return true;
+  },
+
+  addCoins: async (amount) => {
+    const { coins, completedPhases, xp, stars, unlockedAchievements } = get();
+    const nextCoins = coins + amount;
+    set({ coins: nextCoins });
+    
+    const updatedState = {
+      completedPhases,
+      xp,
+      coins: nextCoins,
+      stars,
+      unlockedAchievements
+    };
+    await localforage.setItem('app_cacapalavras_progress', updatedState);
+  },
 
   completePhase: (phaseId, worldId, wordsFoundCount) => {
     const { completedPhases, xp, coins, stars, unlockedAchievements } = get();

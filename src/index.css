@@ -76,6 +76,51 @@ body {
   animation: wave-slide 10s linear infinite;
 }
 
+@keyframes neon-blue-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.85); }
+}
+
+@keyframes neon-amber-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.85); }
+}
+
+@keyframes neon-purple-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(139, 92, 246, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(139, 92, 246, 0.85); }
+}
+
+@keyframes neon-emerald-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(16, 185, 129, 0.85); }
+}
+
+@keyframes neon-pink-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(236, 72, 153, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.85); }
+}
+
+.animate-neon-blue {
+  animation: neon-blue-pulse 3.5s ease-in-out infinite;
+}
+
+.animate-neon-amber {
+  animation: neon-amber-pulse 3.5s ease-in-out infinite;
+}
+
+.animate-neon-purple {
+  animation: neon-purple-pulse 3.5s ease-in-out infinite;
+}
+
+.animate-neon-emerald {
+  animation: neon-emerald-pulse 3.5s ease-in-out infinite;
+}
+
+.animate-neon-pink {
+  animation: neon-pink-pulse 3.5s ease-in-out infinite;
+}
+
 button {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
   transition: box-shadow 0.2s ease-in-out, transform 0.15s ease-in-out;

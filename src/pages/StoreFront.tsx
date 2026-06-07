@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Lightbulb, Star, ChevronRight, Leaf, Play, BookOpen, Brain, Sparkles, Heart, FileText } from 'lucide-react';
+import { Bell, Lightbulb, Star, ChevronRight, Leaf, Play, BookOpen, Brain, Sparkles, Heart, FileText, Settings, X, Trash2, Moon, Sun, Check, MessageSquare, ShieldAlert, Trophy, Gift } from 'lucide-react';
 import { useCacaPalavrasStore } from '../store/useCacaPalavrasStore';
+import { useAppStore } from '../store/useAppStore';
 
 const verses = [
   { img: "https://www.heroesbibletrivia.org/wp-content/uploads/2021/01/facebook.jpg", title: "Game Store Bible", subtitle: "Bem-vindo ao acervo cristão" },
@@ -31,18 +32,76 @@ const games = [
 
 export function StoreFront() {
   const navigate = useNavigate();
-  const { completedPhases } = useCacaPalavrasStore();
+  const { completedPhases, resetProgress: resetCacaPalavrasProgress } = useCacaPalavrasStore();
+  const { version, setVersion, isDarkMode, toggleDarkMode, fontSize, setFontSize } = useAppStore();
+  
   const [currentBanner, setCurrentBanner] = useState(0);
   const [greeting, setGreeting] = useState('');
   const [currentDate, setCurrentDate] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [motivationalMessage, setMotivationalMessage] = useState('');
+  
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'Bíblia Atualizada', text: 'Estudos bíblicos integrados à Inteligência Artificial disponíveis.', date: 'Hoje', read: false },
+    { id: 2, title: 'Progresso Diário', text: 'Não se esqueça de ler o Versículo do Dia!', date: 'Hoje', read: false },
+    { id: 3, title: 'Novo Jogo Liberado', text: 'Modo Caça-Palavras com novos temas de sabedoria.', date: 'Ontem', read: true }
+  ]);
+
+  const hasUnreadNotification = notifications.some(n => !n.read);
 
   const completedCount = completedPhases.length;
 
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const handleResetCacaPalavras = async () => {
+    try {
+      await resetCacaPalavrasProgress();
+      showToast('Progresso redefinido com sucesso!');
+      setShowResetConfirmation(false);
+    } catch (e) {
+      console.error(e);
+      showToast('Erro ao redefinir progresso');
+    }
+  };
+
+  const toggleReadNotification = (id: number) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+    showToast('Notificações limpas');
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    if (scrollTop > 15) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
   useEffect(() => {
     const hr = new Date().getHours();
-    if (hr < 12) setGreeting('Bom dia');
-    else if (hr < 18) setGreeting('Boa tarde');
-    else setGreeting('Boa noite');
+    if (hr < 12) {
+      setGreeting('Bom dia 👋');
+      setMotivationalMessage('Continue sua jornada hoje.');
+    } else if (hr < 18) {
+      setGreeting('Boa tarde ☀️');
+      setMotivationalMessage('Você está indo muito bem.');
+    } else {
+      setGreeting('Boa noite 🌙');
+      setMotivationalMessage('Mais um capítulo concluído.');
+    }
 
     const d = new Date();
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -97,43 +156,72 @@ export function StoreFront() {
         <div className="absolute bottom-[-10%] left-[15%] w-[400px] h-[400px] rounded-full bg-[#3B82F6]/10 opacity-50 blur-[100px]"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-lg mx-auto h-full flex flex-col">
-        {/* Modern Top Header */}
-        <header className="flex justify-between items-center px-6 pt-10 pb-6 gap-3">
-          <div className="flex items-center gap-3 col-span-2">
-            <div className="relative">
+      <div className="relative z-10 w-full max-w-lg mx-auto h-screen overflow-hidden">
+        {/* HEADER FIXO - POSICIONADO ABSOLUTAMENTE PARA PERMITIR CONTEÚDO PASSAR POR TRÁS */}
+        <header className={`absolute top-0 left-0 right-0 z-20 w-full flex justify-between items-center px-6 transition-all duration-500 ease-in-out ${
+          isScrolled 
+            ? 'bg-[#0B1220]/50 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.5)] pt-5 pb-4' 
+            : 'bg-transparent border-b border-transparent pt-8 pb-4'
+        }`}>
+          <div className="flex items-center gap-3">
+            <div 
+              onClick={() => setIsSettingsOpen(true)}
+              className="relative cursor-pointer active:scale-95 hover:scale-105 transition-all duration-300"
+            >
               <img 
                 src="https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg" 
-                className="w-12 h-12 rounded-full object-cover border-2 border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.4)] active:scale-95 transition-transform" 
-                alt="Profile" 
+                className="w-11 h-11 rounded-full object-cover border-2 border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.35)]" 
+                alt="Avatar do Usuário" 
               />
-              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#22C55E] border-2 border-[#0B1220] rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#22C55E] border-2 border-[#0B1220] rounded-full"></span>
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">{currentDate}</span>
-              <h2 className="text-white text-md font-extrabold tracking-tight leading-tight">{greeting}, 👋</h2>
-              <p className="text-[#94A3B8] text-[11px] font-semibold">Inicie sua jornada hoje!</p>
+              <h2 className="text-white text-[15px] font-extrabold tracking-tight leading-tight">{greeting}</h2>
+              <p className="text-[#94A3B8] text-[10px] font-semibold">{motivationalMessage}</p>
             </div>
           </div>
           
           <div className="flex gap-2 shrink-0">
             <button 
               onClick={shareIdea}
-              className="w-9 h-9 rounded-full bg-[#172033]/80 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/95 hover:bg-[#3B82F6]/20 hover:text-[#3B82F6] transition-all shadow-md active:scale-95"
+              className="w-9 h-9 rounded-full bg-[#172033]/80 border border-[#3B82F6]/35 flex items-center justify-center text-white/95 hover:bg-[#3B82F6]/20 hover:text-[#3B82F6] transition-all shadow-[0_0_12px_rgba(59,130,246,0.25)] active:scale-95"
               title="Compartilhar Feedback"
             >
               <Lightbulb size={16} />
             </button>
-            <button className="relative w-9 h-9 rounded-full bg-[#172033]/80 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/95 hover:bg-[#3B82F6]/20 hover:text-[#3B82F6] transition-all shadow-md active:scale-95">
+            
+            <button 
+              onClick={() => setIsNotificationsOpen(true)}
+              className="relative w-9 h-9 rounded-full bg-[#172033]/80 border border-[#3B82F6]/35 flex items-center justify-center text-white/95 hover:bg-[#3B82F6]/20 hover:text-[#3B82F6] transition-all shadow-[0_0_12px_rgba(59,130,246,0.25)] active:scale-95"
+              title="Notificações"
+            >
               <Bell size={16} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#22C55E] border-[2px] border-[#172033] rounded-full animate-pulse"></span>
+              {hasUnreadNotification && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-[#172033] rounded-full animate-ping"></span>
+              )}
+              {hasUnreadNotification && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-[#172033] rounded-full"></span>
+              )}
+            </button>
+
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="w-9 h-9 rounded-full bg-[#172033]/80 border border-[#3B82F6]/35 flex items-center justify-center text-white/95 hover:bg-[#3B82F6]/20 hover:text-[#3B82F6] transition-all shadow-[0_0_12px_rgba(59,130,246,0.25)] active:scale-95"
+              title="Configurações"
+            >
+              <Settings size={16} />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto no-scrollbar pb-32 space-y-8">
-          {/* Main Hero Card (Premium Banner style) */}
-          <section className="px-6 w-full">
+        {/* CONTAINER DE SCROLL - APENAS ESTA SEÇÃO DE CONTEÚDO ROLA POR TRÁS DO HEADER */}
+        <div 
+          onScroll={handleScroll}
+          className="h-full w-full overflow-y-auto no-scrollbar pb-32 px-6 pt-[115px] space-y-8"
+        >
+          {/* BANNER PRINCIPAL (ALTURA ENTRE 180 E 220 PIXELS) */}
+          <section className="w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentBanner}
@@ -141,7 +229,7 @@ export function StoreFront() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-                className="relative h-[160px] w-full rounded-[24px] overflow-hidden shadow-[0_0_25px_rgba(255,255,255,0.18)] border border-white/20 flex flex-col group cursor-pointer"
+                className="relative h-[200px] w-full rounded-[24px] overflow-hidden border border-white/10 flex flex-col group cursor-pointer animate-neon-blue"
               >
                 <img src={verses[currentBanner].img} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[8s] group-hover:scale-105" alt="Hero" />
                 {/* Modern Dark Gradient Overlay */}
@@ -175,8 +263,45 @@ export function StoreFront() {
             </div>
           </section>
 
-          {/* SECTION: PREMIUM FEATURE - CAÇA PALAVRAS (DUOLINGO MAP CARD) */}
-          <section className="px-6">
+          {/* VERSÍCULO DO DIA (ILUSTRADO) */}
+          <section>
+            <div className="flex justify-between items-baseline mb-4 px-1">
+              <h2 className="text-white text-md font-black uppercase tracking-wider flex items-center gap-1.5">
+                <span>📖</span> Versículo do Dia
+              </h2>
+              <span className="text-[10px] text-[#F59E0B] font-bold uppercase tracking-wider">MENSAGEM</span>
+            </div>
+            
+            <motion.div 
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleCardClick('word_of_day')}
+              className="relative rounded-[24px] bg-gradient-to-br from-[#1E1B4B] via-[#0F172A] to-[#1E293B] border border-[#F59E0B]/20 p-5 overflow-hidden cursor-pointer group flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-neon-amber"
+            >
+              <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-25 bg-[url('https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?auto=format&fit=crop&q=80&w=400')] bg-cover bg-center pointer-events-none rounded-r-[24px]" />
+              
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-full bg-[#F59E0B]/10 border border-[#F59E0B]/25">
+                  <Leaf size={16} className="text-[#F59E0B]" />
+                </div>
+                <span className="text-xs font-extrabold text-white uppercase tracking-wider">Sabedoria Diária</span>
+              </div>
+              
+              <p className="text-white text-sm font-bold italic leading-relaxed z-10 max-w-[70%]">
+                "Lâmpada para os meus pés é tua palavra e luz, para o meu caminho."
+              </p>
+              <span className="text-xs text-[#F59E0B] font-extrabold z-10">— Salmos 119:105</span>
+              
+              <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                <span className="text-[10px] text-[#94A3B8] font-semibold">Toque para ouvir e estudar</span>
+                <span className="text-[10px] text-[#3B82F6] font-bold flex items-center gap-0.5 group-hover:underline">
+                  Acessar <ChevronRight size={10} />
+                </span>
+              </div>
+            </motion.div>
+          </section>
+
+          {/* CAÇA-PALAVRAS (MAPA DE GAMIFICAÇÃO COGNITIVA) */}
+          <section>
             <div className="flex justify-between items-baseline mb-4 px-1">
               <h2 className="text-white text-md font-black uppercase tracking-wider flex items-center gap-1.5">
                 <span>🎮</span> Jogos Bíblicos e Desafios
@@ -184,13 +309,11 @@ export function StoreFront() {
               <span className="text-[10px] text-[#3B82F6] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded bg-[#3B82F6]/10 border border-[#3B82F6]/15">GAMIFICAÇÃO</span>
             </div>
 
-            {/* Featured word search card layout */}
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCardClick('caca_palavras')}
-              className="relative rounded-[24px] bg-gradient-to-br from-[#172033] to-[#0F172A] border border-white/10 p-5 overflow-hidden shadow-2xl cursor-pointer group flex items-center justify-between gap-4"
+              className="relative rounded-[24px] bg-gradient-to-br from-[#172033] to-[#0F172A] border border-[#F59E0B]/20 p-5 overflow-hidden cursor-pointer group flex items-center justify-between gap-4 animate-neon-amber"
             >
-              {/* Internal abstract shine decoration */}
               <div className="absolute -right-12 -bottom-12 w-32 h-32 rounded-full bg-[#f59e0b]/10 blur-2xl group-hover:bg-[#f59e0b]/15 transition-all pointer-events-none" />
               
               <div className="flex-1 min-w-0 relative z-10">
@@ -206,7 +329,6 @@ export function StoreFront() {
                   Encontre palavras sagradas ocultas, complete desafios e desvende novos mundos!
                 </p>
 
-                {/* Progress bar container */}
                 <div className="space-y-1.5 max-w-xs">
                   <div className="flex justify-between text-[9px] font-bold tracking-wider uppercase text-[#94A3B8]">
                     <span>Fases Concluídas</span>
@@ -221,15 +343,14 @@ export function StoreFront() {
                 </div>
               </div>
 
-              {/* Big play action button */}
-              <button className="w-12 h-12 rounded-2xl bg-[#3B82F6] group-hover:bg-[#2563EB] text-[#0B1220] group-hover:text-white flex items-center justify-center shrink-0 border border-[#3B82F6]/50 shadow-lg shadow-[#3B82F6]/25 transform group-hover:scale-105 transition-all">
+              <button className="w-12 h-12 rounded-2xl bg-[#3B82F6] group-hover:bg-[#2563EB] text-[#0B1220] group-hover:text-white flex items-center justify-center shrink-0 border border-[#3B82F6]/40 shadow-[0_0_20px_rgba(59,130,246,0.8)] transform group-hover:scale-105 transition-all">
                 <Play size={16} className="fill-current ml-0.5" />
               </button>
             </motion.div>
           </section>
 
-          {/* SECTION: ARCADES AND OTHER OFFERS */}
-          <section className="px-6">
+          {/* OUTROS JOGOS DE AÇÃO */}
+          <section>
             <div className="flex justify-between items-baseline mb-4 px-1">
               <h2 className="text-[#94A3B8] text-[10px] font-extrabold uppercase tracking-widest">Outros Jogos de Ação</h2>
             </div>
@@ -239,7 +360,7 @@ export function StoreFront() {
                 <div 
                   key={g.id}
                   onClick={() => handleCardClick(g.action)}
-                  className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[20px] p-3.5 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[155px] active:scale-[0.96] group relative overflow-hidden"
+                  className="bg-[#172033]/70 hover:bg-[#172033] border border-[#3B82F6]/20 hover:border-[#3B82F6]/40 rounded-[20px] p-3.5 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[155px] active:scale-[0.96] group relative overflow-hidden animate-neon-blue"
                 >
                   <div className="absolute top-2 right-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] scale-90 z-10 border border-[#F59E0B]/10">
                     <Star size={10} className="fill-[#F59E0B] shrink-0" />
@@ -247,7 +368,6 @@ export function StoreFront() {
                   </div>
 
                   <div>
-                    {/* Thumbnail */}
                     <div className="w-[42px] h-[42px] rounded-[10px] overflow-hidden shrink-0 bg-[#0B1220]/50 border border-white/5 mb-3.5">
                       <img src={g.img} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" alt={g.title} />
                     </div>
@@ -268,115 +388,452 @@ export function StoreFront() {
             </div>
           </section>
 
-          {/* SECTION: RECURSOS E JORNADA ESPIRITUAL (GRID) */}
-          <section className="px-6">
+          {/* LISTVIEW PREMIUM (CRISTÃO INTEGRADO COM RIPPLE/SCALE FEEDBACKS) */}
+          <section>
             <div className="flex justify-between items-baseline mb-4 px-1">
               <h2 className="text-white text-md font-black uppercase tracking-wider flex items-center gap-1.5">
-                <span>📖</span> Atividades e Estudos
+                <span>📋</span> Recursos para Você
               </h2>
-              <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">RECURSOS</span>
+              <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">BIBLIOTECA</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3.5">
-              {/* Card 1: Bíblia Sagrada */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('bible')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-[#3B82F6]/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <BookOpen size={18} className="text-[#3B82F6]" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Bíblia Sagrada</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Leitura offline completa e fluida.</p>
-                </div>
-              </motion.div>
-
-              {/* Card 2: Versículo do Dia */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('word_of_day')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-[#F59E0B]/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <Leaf size={18} className="text-[#F59E0B]" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Versículo do Dia</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Leia uma mensagem inspiradora diária.</p>
-                </div>
-              </motion.div>
-
-              {/* Card 3: Quiz Bíblico */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('quiz')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-[#8B5CF6]/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <Brain size={18} className="text-[#8B5CF6]" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Quiz Bíblico</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Teste seus conhecimentos com a IA.</p>
-                </div>
-              </motion.div>
-
-              {/* Card 4: Plano de Leitura */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('plan')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-emerald-500/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <FileText size={18} className="text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Plano de Leitura</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Acompanhe e registre seu avanço.</p>
-                </div>
-              </motion.div>
-
-              {/* Card 5: Favoritos */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('favorites')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-[#EC4899]/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <Heart size={18} className="text-[#EC4899] fill-[#EC4899]/10" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Favoritos</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Consulte seus versículos prediletos.</p>
-                </div>
-              </motion.div>
-
-              {/* Card 6: Assistente Bíblico IA */}
-              <motion.div 
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleCardClick('ai-hub')}
-                className="bg-[#172033]/70 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[22px] p-4 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[135px] relative overflow-hidden group"
-              >
-                <div className="absolute right-[-15px] top-[-10px] w-20 h-20 rounded-full bg-amber-500/5 blur-xl pointer-events-none"></div>
-                <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-white/10 flex items-center justify-center shrink-0">
-                  <Sparkles size={18} className="text-amber-400" />
-                </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-[14px]">Assistente IA</h3>
-                  <p className="text-[#94A3B8] text-[10px] leading-normal mt-0.5">Explicações inteligentes e estudos.</p>
-                </div>
-              </motion.div>
+            <div className="space-y-3">
+              {[
+                { 
+                  id: 'bible', 
+                  title: 'Bíblia Offline 📖', 
+                  subtitle: 'Leia todos os livros da Bíblia de forma fluida.', 
+                  color: 'from-blue-600/20 to-blue-900/10 border-blue-500/20',
+                  badge: 'Offline',
+                  image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=150'
+                },
+                { 
+                  id: 'caca_palavras', 
+                  title: 'Caça-Palavras 🎮', 
+                  subtitle: 'Desafios enriquecedores com recompensas bíblicas.', 
+                  color: 'from-amber-600/20 to-amber-900/10 border-amber-500/20',
+                  badge: 'Fases',
+                  image: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&q=80&w=150'
+                },
+                { 
+                  id: 'quiz', 
+                  title: 'Quiz Bíblico 🧠', 
+                  subtitle: 'Incrível teste para aferir seus conhecimentos.', 
+                  color: 'from-purple-600/20 to-purple-900/10 border-purple-500/20',
+                  badge: 'Quiz',
+                  image: 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&q=80&w=150'
+                },
+                { 
+                  id: 'plan', 
+                  title: 'Plano de Leitura 📚', 
+                  subtitle: 'Acompanhe seu progresso de leitura em tempo real.', 
+                  color: 'from-emerald-600/20 to-emerald-900/10 border-emerald-500/20',
+                  badge: 'Metas',
+                  image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=150'
+                },
+                { 
+                  id: 'favorites', 
+                  title: 'Favoritos ⭐', 
+                  subtitle: 'Consulte seus versículos salvos de forma rápida.', 
+                  color: 'from-pink-600/20 to-pink-900/10 border-pink-500/20',
+                  badge: 'Salvos',
+                  image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&q=80&w=150'
+                },
+                { 
+                  id: 'ai-hub', 
+                  title: 'Assistente Bíblico IA 🤖', 
+                  subtitle: 'Explicações e estudos detalhados com inteligência.', 
+                  color: 'from-cyan-600/20 to-cyan-900/10 border-cyan-500/20',
+                  badge: 'Inteligente',
+                  image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=150'
+                }
+              ].map((item) => (
+                <motion.div
+                  key={item.id}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleCardClick(item.id)}
+                  className={`bg-gradient-to-r ${item.color} border p-3.5 rounded-2xl cursor-pointer hover:scale-[1.01] transition-all flex items-center justify-between gap-4 shadow-sm`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img 
+                      src={item.image} 
+                      className="w-12 h-12 rounded-xl object-cover border border-white/10 shrink-0" 
+                      alt={item.title} 
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="text-white text-sm font-extrabold tracking-tight truncate">{item.title}</h4>
+                        <span className="px-1.5 py-0.5 text-[8px] font-bold rounded bg-white/5 text-white/70 tracking-wider font-mono">
+                          {item.badge}
+                        </span>
+                      </div>
+                      <p className="text-[#94A3B8] text-[11px] font-semibold leading-relaxed truncate">{item.subtitle}</p>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-white shrink-0">
+                    <ChevronRight size={14} />
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </section>
-        </main>
+
+          {/* CONQUISTAS (ACHIEVEMENTS PANEL) */}
+          <section>
+            <div className="flex justify-between items-baseline mb-4 px-1">
+              <h2 className="text-white text-md font-black uppercase tracking-wider flex items-center gap-1.5">
+                <span>🏆</span> Suas Conquistas
+              </h2>
+              <span className="text-[10px] text-[#3B82F6] font-bold uppercase tracking-wider">RANKING</span>
+            </div>
+            
+            <div className="bg-[#172033]/60 border border-white/5 p-4 rounded-[24px] space-y-4 shadow-inner">
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-[#0B1220]/60 p-3 rounded-2xl flex flex-col items-center text-center border border-white/5">
+                  <Trophy size={20} className="text-[#F59E0B] mb-1 animate-pulse" />
+                  <span className="text-[9px] text-[#94A3B8] font-bold font-mono">FASES LINDAS</span>
+                  <span className="text-sm font-extrabold text-white mt-0.5">{completedCount}</span>
+                </div>
+                
+                <div className="bg-[#0B1220]/60 p-3 rounded-2xl flex flex-col items-center text-center border border-white/5">
+                  <Star size={20} className="text-[#3B82F6] mb-1" />
+                  <span className="text-[9px] text-[#94A3B8] font-bold font-mono">MOEDAS</span>
+                  <span className="text-sm font-extrabold text-white mt-0.5">450</span>
+                </div>
+                
+                <div className="bg-[#0B1220]/60 p-3 rounded-2xl flex flex-col items-center text-center border border-white/5">
+                  <Sparkles size={20} className="text-purple-400 mb-1" />
+                  <span className="text-[9px] text-[#94A3B8] font-bold font-mono">INSÍGNIA</span>
+                  <span className="text-[11px] font-extrabold text-purple-400 mt-1 uppercase">Sábio</span>
+                </div>
+              </div>
+
+              <div className="bg-[#0B1220]/40 p-3.5 rounded-xl border border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Check className="text-[#22C55E]" size={16} />
+                  <span className="text-xs text-[#94A3B8] font-bold">Resiliência Diária ativa</span>
+                </div>
+                <span className="text-[10px] bg-[#22C55E]/10 border border-emerald-500/20 text-[#22C55E] px-2 py-0.5 rounded font-black font-mono">100% OK</span>
+              </div>
+            </div>
+          </section>
+
+          {/* RECOMPENSAS DIÁRIAS */}
+          <section>
+            <div className="flex justify-between items-baseline mb-4 px-1">
+              <h2 className="text-white text-md font-black uppercase tracking-wider flex items-center gap-1.5">
+                <span>🎁</span> Recompensas Diárias
+              </h2>
+              <span className="text-[10px] text-[#22C55E] font-bold uppercase tracking-wider font-mono">REFORÇO</span>
+            </div>
+            
+            <motion.div 
+              whileTap={{ scale: 0.98 }}
+              onClick={() => showToast('Recompensa Diária de +50 moedas coletada!')}
+              className="relative overflow-hidden bg-gradient-to-r from-emerald-600/20 to-[#172033]/60 border border-emerald-500/20 rounded-[24px] p-5 flex items-center justify-between cursor-pointer group shadow-lg"
+            >
+              <div className="absolute top-[-10px] right-[-10px] w-16 h-16 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+              
+              <div className="flex items-center gap-3.5 z-10">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Gift size={22} className="group-hover:animate-bounce" />
+                </div>
+                <div>
+                  <h4 className="text-white font-extrabold text-[14.5px]">Bônus de Sabedoria</h4>
+                  <p className="text-[#94A3B8] text-[10.5px] leading-relaxed">Toque para coletar sua recompensa de hoje.</p>
+                </div>
+              </div>
+              
+              <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-[#0B1220] font-extrabold text-xs tracking-wider z-10 transition-all active:scale-95">
+                Coletar
+              </span>
+            </motion.div>
+          </section>
+        </div>
       </div>
+
+      {/* TOAST SYSTEM */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#22C55E]/90 backdrop-blur-md px-5 py-3 rounded-full border border-emerald-400/30 text-white font-extrabold text-xs tracking-wide shadow-[0_10px_30px_rgba(34,197,94,0.3)] flex items-center gap-2"
+          >
+            <Check size={14} className="text-white" />
+            {toastMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* NOTIFICATIONS CONTAINER (GLASS SIDE SHEET) */}
+      <AnimatePresence>
+        {isNotificationsOpen && (
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsNotificationsOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 cursor-pointer"
+            />
+            
+            {/* Notifications panel drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed top-0 right-0 h-full w-full max-w-[380px] bg-[#0F172A]/95 border-l border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] z-50 flex flex-col pt-8 pb-6 px-6 font-sans text-white focus:outline-none"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-2.5">
+                  <Bell className="text-[#3B82F6]" size={20} />
+                  <h3 className="text-lg font-extrabold tracking-tight">Notificações</h3>
+                </div>
+                <div className="flex items-center gap-1">
+                  {notifications.length > 0 && (
+                    <button 
+                      onClick={clearAllNotifications}
+                      className="p-2 rounded-xl bg-white/5 text-[#94A3B8] hover:text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center cursor-pointer"
+                      title="Limpar todas as notificações"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => setIsNotificationsOpen(false)}
+                    className="p-2 rounded-xl bg-white/5 text-[#94A3B8] hover:text-white hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Scrollable list */}
+              <div className="flex-1 overflow-y-auto no-scrollbar space-y-3.5 pr-0.5">
+                {notifications.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center border border-white/5 shadow-inner">
+                      <Check className="text-[#94A3B8]" size={28} />
+                    </div>
+                    <div className="space-y-1 max-w-xs">
+                      <p className="text-white font-extrabold text-[15px]">Tudo lido!</p>
+                      <p className="text-[#94A3B8] text-xs leading-relaxed font-medium">Nenhuma recomendação ou notificação nova para o momento.</p>
+                    </div>
+                    <p className="text-[10px] text-[#3B82F6] italic font-semibold leading-relaxed px-4 pt-4 border-t border-white/5">
+                      "Guarda o teu coração, porque dele procedem as fontes da vida." <br />— Provérbios 4:23
+                    </p>
+                  </div>
+                ) : (
+                  notifications.map((n) => (
+                    <div 
+                      key={n.id}
+                      onClick={() => toggleReadNotification(n.id)}
+                      className={`relative p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-1.5 ${n.read ? 'bg-white/5 border-white/5 hover:bg-white/10 opacity-75' : 'bg-[#172033]/90 border-[#3B82F6]/20 hover:border-[#3B82F6]/40 shadow-[0_4px_16px_rgba(59,130,246,0.08)]'}`}
+                    >
+                      {!n.read && (
+                        <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#3B82F6]"></span>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">{n.date}</span>
+                      </div>
+                      <h4 className={`text-[13px] font-extrabold ${n.read ? 'text-[#94A3B8]' : 'text-white'}`}>{n.title}</h4>
+                      <p className="text-[#94A3B8] text-xs leading-normal font-medium">{n.text}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* SETTINGS CONTAINER (GLASS BOTTOM SHEET) */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setIsSettingsOpen(false);
+                setShowResetConfirmation(false);
+              }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 cursor-pointer"
+            />
+            
+            {/* Settings bottom drawer sheet */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto w-full max-w-lg mx-auto bg-[#0F172A]/95 border-t border-white/10 rounded-t-[32px] shadow-[0_-15px_45px_rgba(0,0,0,0.8)] z-50 flex flex-col pt-7 pb-8 px-6 font-sans text-white focus:outline-none no-scrollbar"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-2.5">
+                  <Settings className="text-[#F59E0B]" size={20} />
+                  <h3 className="text-lg font-extrabold tracking-tight">Configurações</h3>
+                </div>
+                <button 
+                  onClick={() => {
+                    setIsSettingsOpen(false);
+                    setShowResetConfirmation(false);
+                  }}
+                  className="p-2 rounded-xl bg-white/5 text-[#94A3B8] hover:text-white hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Settings list items inside bottom sheet */}
+              <div className="space-y-6">
+                
+                {/* Profile Header Spot */}
+                <div className="bg-[#172033]/60 border border-white/5 p-4 rounded-2xl flex items-center gap-3.5 shadow-inner">
+                  <img 
+                    src="https://res.cloudinary.com/donb73jnb/image/upload/v1777405912/leaodatribo_sq5riz.jpg" 
+                    className="w-12 h-12 rounded-full object-cover border-2 border-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.25)]" 
+                    alt="Avatar" 
+                  />
+                  <div className="flex flex-col min-w-0">
+                    <h4 className="text-white text-sm font-extrabold tracking-tight">Discípulo Bíblico</h4>
+                    <span className="inline-block self-start px-2 py-0.5 rounded-full text-[8px] font-extrabold tracking-wider bg-[#3B82F6]/20 text-[#3B82F6] uppercase border border-[#3B82F6]/25 mt-1">
+                      Nível Sagrado
+                    </span>
+                  </div>
+                </div>
+
+                {/* Section A: Bible Versos translation version setting */}
+                <div className="space-y-2.5">
+                  <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">Tradução Bíblica de Leitura</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setVersion('acf');
+                        showToast('Tradução alterada: ACF');
+                      }}
+                      className={`px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wide transition-all ${version === 'acf' ? 'bg-[#3B82F6] border-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/5 text-[#94A3B8] hover:bg-white/10'}`}
+                    >
+                      ACF (Almeida Fiel)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setVersion('nvi');
+                        showToast('Tradução alterada: NVI');
+                      }}
+                      className={`px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wide transition-all ${version === 'nvi' ? 'bg-[#3B82F6] border-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/5 text-[#94A3B8] hover:bg-white/10'}`}
+                    >
+                      NVI (Internacional)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section B: Text Font Size setting */}
+                <div className="space-y-2.5">
+                  <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">Tamanho do Texto</span>
+                  <div className="flex items-center justify-between gap-4 p-3.5 bg-white/5 border border-white/5 rounded-2xl">
+                    <span className="text-xs text-[#94A3B8] font-semibold">Leitor de capítulos</span>
+                    <div className="flex gap-1.5">
+                      {[14, 18, 22].map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => {
+                            setFontSize(size);
+                            showToast(`Fonte definida para ${size}px`);
+                          }}
+                          className={`w-10 h-10 rounded-xl border text-xs font-bold flex items-center justify-center transition-all ${fontSize === size ? 'bg-[#F59E0B] border-[#F59E0B] text-[#0F172A] shadow-[0_0_15px_rgba(245,158,11,0.3)] font-extrabold' : 'bg-white/5 border-white/5 text-[#94A3B8] hover:bg-white/10'}`}
+                        >
+                          {size === 14 ? 'A-' : size === 18 ? 'A' : 'A+'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section C: Theme Mode Switch (simulation link to global layout context) */}
+                <div className="space-y-2.5">
+                  <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">Visual do Aplicativo</span>
+                  <div className="flex items-center justify-between p-3.5 bg-white/5 border border-white/5 rounded-2xl">
+                    <span className="text-xs text-[#94A3B8] font-semibold">Esquema Cosmos de Cores</span>
+                    <button
+                      onClick={() => {
+                        toggleDarkMode();
+                        showToast(!isDarkMode ? 'Modo claro ativado!' : 'Modo Cosmos ativado!');
+                      }}
+                      className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white font-extrabold uppercase tracking-wider hover:bg-white/10 transition-all cursor-pointer active:scale-95"
+                    >
+                      {isDarkMode ? (
+                        <>
+                          <Moon size={13} className="text-[#3B82F6]" />
+                          Cosmos
+                        </>
+                      ) : (
+                        <>
+                          <Sun size={13} className="text-[#F59E0B]" />
+                          Claro
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section D: Game parameters control & resetting action */}
+                <div className="pt-2 border-t border-white/5 space-y-3.5">
+                  <span className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider">Ações de Segurança</span>
+                  
+                  {!showResetConfirmation ? (
+                    <button
+                      onClick={() => setShowResetConfirmation(true)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 hover:border-red-500/30 rounded-xl text-xs font-bold text-red-400 uppercase tracking-wide transition-all active:scale-95 cursor-pointer animate-pulse"
+                    >
+                      <Trash2 size={14} />
+                      Redefinar Caça-Palavras
+                    </button>
+                  ) : (
+                    <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <ShieldAlert size={16} className="text-red-400 shrink-0 mt-0.5 animate-pulse" />
+                        <div className="space-y-0.5">
+                          <p className="text-xs text-white font-extrabold leading-normal">Confirmar exclusão de dados?</p>
+                          <p className="text-[10.5px] text-[#94A3B8] leading-normal font-semibold">Toda a sua pontuação, moedas, fases finalizadas e conquistas do Caça-Palavras Bíblico serão redefinidas permanentemente.</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleResetCacaPalavras}
+                          className="flex-1 px-3 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-[11px] font-extrabold tracking-wide text-white transition-all uppercase active:scale-95 cursor-pointer"
+                        >
+                          Sim, Apagar Tudo
+                        </button>
+                        <button
+                          onClick={() => setShowResetConfirmation(false)}
+                          className="flex-1 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-[11px] font-extrabold tracking-wide text-[#94A3B8] transition-all uppercase active:scale-95 cursor-pointer"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Section E: General Info */}
+                <div className="pt-4 border-t border-white/5 flex flex-col items-center gap-1.5 text-center text-[10px] text-[#94A3B8]">
+                  <p className="font-semibold text-white">Game Store Bíblico — Edição Celestial</p>
+                  <p className="font-semibold">Versão 2.1.0 • Desenvolvido com Inteligência Artificial</p>
+                  <p className="text-[#3B82F6]/60 italic font-semibold mt-1">"Buscai em primeiro lugar o Reino de Deus..." — Mateus 6:33</p>
+                </div>
+
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

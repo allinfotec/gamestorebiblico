@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -25,7 +25,7 @@ interface ConfettiParticle {
 export function CacaPalavras() {
   const navigate = useNavigate();
   const { 
-    completedPhases, xp, coins, stars, unlockedAchievements, completePhase, resetProgress 
+    completedPhases, xp, coins, stars, unlockedAchievements, completePhase, resetProgress, spendCoins, addCoins 
   } = useCacaPalavrasStore();
 
   // Navigation page views: "worlds", "game", "achievements"
@@ -39,14 +39,33 @@ export function CacaPalavras() {
   // Grid state
   const [grid, setGrid] = useState<string[][]>([]);
   const [placedWords, setPlacedWords] = useState<PlacedWord[]>([]);
-  const [foundWords, setFoundWords] = useState<string[]>([]);
-  const [foundCoords, setFoundCoords] = useState<CellCoord[]>([]); // Coords of found words to persist highlight
   
+  // Advanced Word Found status
+  interface FoundWordProgress {
+    word: string;
+    colorIndex: number;
+    coords: CellCoord[];
+  }
+  const [completedWordsList, setCompletedWordsList] = useState<FoundWordProgress[]>([]);
+  
+  // Computed values
+  const foundWords = completedWordsList.map(cw => cw.word);
+  const foundCoords = completedWordsList.flatMap(cw => cw.coords);
+
   // Interactive selection state
   const [selectionStart, setSelectionStart] = useState<CellCoord | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<CellCoord | null>(null);
   const [selectionCoords, setSelectionCoords] = useState<CellCoord[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
+  const [isSelectionError, setIsSelectionError] = useState(false);
+  const [errorCoords, setErrorCoords] = useState<CellCoord[]>([]);
+
+  // Accessibility Sizing Zoom
+  const [zoomLevel, setZoomLevel] = useState<"sm" | "md" | "lg" | "xl">("lg");
+
+  // Hint items highlighting
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintLetters, setHintLetters] = useState<CellCoord[]>([]);
 
   // Game timing
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -58,9 +77,142 @@ export function CacaPalavras() {
   const [confettis, setConfettis] = useState<ConfettiParticle[]>([]);
   const confettiTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sound play handler
-  const playSfx = (type: 'pop' | 'success' | 'victory' | 'fail') => {
-    if (soundEnabled) playSound(type);
+  // Real-time custom matched particle sparkles
+  interface FloatingSparkle {
+    id: number;
+    x: number;
+    y: number;
+    color: string;
+    size: number;
+  }
+  const [sparkles, setSparkles] = useState<FloatingSparkle[]>([]);
+
+  // Distinct word color configs in sequence
+  const WORD_COLORS = [
+    { text: "text-emerald-400", bg: "bg-emerald-500/15", border: "border-emerald-500/40", hex: "#10B981", rgb: "16, 185, 129" }, // 🟢 Verde
+    { text: "text-purple-400", bg: "bg-purple-500/15", border: "border-purple-500/40", hex: "#8B5CF6", rgb: "139, 92, 246" }, // 🟣 Roxo
+    { text: "text-pink-400", bg: "bg-pink-500/15", border: "border-pink-500/40", hex: "#EC4899", rgb: "236, 72, 153" }, // 🩷 Rosa
+    { text: "text-amber-500", bg: "bg-amber-500/15", border: "border-amber-500/40", hex: "#F59E0B", rgb: "245, 158, 11" }, // 🟠 Laranja
+    { text: "text-blue-400", bg: "bg-blue-500/15", border: "border-blue-500/40", hex: "#3B82F6", rgb: "59, 130, 246" }, // 🔵 Azul
+    { text: "text-yellow-400", bg: "bg-yellow-500/15", border: "border-yellow-500/40", hex: "#EAB308", rgb: "234, 179, 8" }, // 🟡 Amarelo
+    { text: "text-amber-800", bg: "bg-amber-800/15", border: "border-amber-800/40", hex: "#78350F", rgb: "120, 53, 15" }, // 🟤 Marrom
+    { text: "text-red-400", bg: "bg-red-500/15", border: "border-red-500/40", hex: "#EF4444", rgb: "239, 68, 68" }, // 🔴 Vermelho
+  ];
+
+  const zoomConfig = {
+    sm: { cell: "w-8 h-8 min-w-[32px] min-h-[32px]", font: "text-xs", label: "Pequena" },
+    md: { cell: "w-9 h-9 min-w-[36px] min-h-[36px]", font: "text-sm", label: "Média" },
+    lg: { cell: "w-11 h-11 min-w-[44px] min-h-[44px]", font: "text-base", label: "Grande" },
+    xl: { cell: "w-13 h-13 min-w-[52px] min-h-[52px]", font: "text-xl", label: "Extra G." }
+  };
+
+  const zoomOptions: ("sm" | "md" | "lg" | "xl")[] = ["sm", "md", "lg", "xl"];
+
+  // Offline zero-latency Synthesizer beep
+  const playSfx = (type: 'pop' | 'success' | 'victory' | 'fail' | 'click') => {
+    if (!soundEnabled) return;
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'pop') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(380, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(740, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      } else if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.06); // E5
+        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.12); // G5
+        osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.18); // C6
+        gain.gain.setValueAtTime(0.07, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      } else if (type === 'fail') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+        osc.frequency.setValueAtTime(147, ctx.currentTime + 0.14); // D3
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } else if (type === 'victory') {
+        // Glorious arpeggio chords
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((freq, idx) => {
+          const oscNode = ctx.createOscillator();
+          const gainNode = ctx.createGain();
+          oscNode.type = 'sine';
+          oscNode.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+          oscNode.connect(gainNode);
+          gainNode.connect(ctx.destination);
+          gainNode.gain.setValueAtTime(0, ctx.currentTime);
+          gainNode.gain.linearRampToValueAtTime(0.06, ctx.currentTime + idx * 0.08 + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.4);
+          oscNode.start(ctx.currentTime + idx * 0.08);
+          oscNode.stop(ctx.currentTime + idx * 0.08 + 0.4);
+        });
+      } else if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(550, ctx.currentTime);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      }
+    } catch (_) {}
+  };
+
+  // Safe device short vibration support
+  const triggerVibrate = (ms = 60) => {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try {
+        navigator.vibrate(ms);
+      } catch (_) {}
+    }
+  };
+
+  // Restore Sizing Preferences on Mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("caca_palavras_zoom");
+      if (saved && (saved === "sm" || saved === "md" || saved === "lg" || saved === "xl")) {
+        setZoomLevel(saved);
+      }
+    } catch (_) {}
+  }, []);
+
+  const changeZoom = (level: "sm" | "md" | "lg" | "xl") => {
+    setZoomLevel(level);
+    try {
+      localStorage.setItem("caca_palavras_zoom", level);
+    } catch (_) {}
+  };
+
+  const decreaseZoom = () => {
+    const idx = zoomOptions.indexOf(zoomLevel);
+    if (idx > 0) {
+      changeZoom(zoomOptions[idx - 1]);
+      playSfx('click');
+    }
+  };
+
+  const increaseZoom = () => {
+    const idx = zoomOptions.indexOf(zoomLevel);
+    if (idx < zoomOptions.length - 1) {
+      changeZoom(zoomOptions[idx + 1]);
+      playSfx('click');
+    }
   };
 
   // Unlocking rules helper
@@ -86,22 +238,62 @@ export function CacaPalavras() {
   // Convert game coordinates to localized string for simpler keying
   const coordKey = (r: number, c: number) => `${r}-${c}`;
 
+  // Load saved current level progress if any
+  useEffect(() => {
+    if (selectedPhase && selectedWorld) {
+      try {
+        const savedKey = `caca_palavras_progress_${selectedPhase.id}`;
+        const saved = localStorage.getItem(savedKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed)) {
+            setCompletedWordsList(parsed);
+          }
+        } else {
+          setCompletedWordsList([]);
+        }
+      } catch (e) {
+        setCompletedWordsList([]);
+      }
+      setHintsUsed(0);
+      setHintLetters([]);
+    }
+  }, [selectedPhase, selectedWorld]);
+
+  // Save current level progress automatically when it changes
+  useEffect(() => {
+    if (selectedPhase && completedWordsList.length > 0) {
+      try {
+        const savedKey = `caca_palavras_progress_${selectedPhase.id}`;
+        localStorage.setItem(savedKey, JSON.stringify(completedWordsList));
+      } catch (e) {}
+    }
+  }, [completedWordsList, selectedPhase]);
+
+  // Clean saved progress on victory
+  const clearLevelSave = (phaseId: string) => {
+    try {
+      localStorage.removeItem(`caca_palavras_progress_${phaseId}`);
+    } catch (e) {}
+  };
+
   // Start selected Level
   const startLevel = (world: CacaPalavrasWorld, phase: CacaPalavrasPhase) => {
     setSelectedWorld(world);
     setSelectedPhase(phase);
-    setFoundWords([]);
-    setFoundCoords([]);
+    setCompletedWordsList([]);
     setSelectionStart(null);
     setSelectionEnd(null);
     setSelectionCoords([]);
     setTimeElapsed(0);
     setShowVictoryModal(false);
     setUnlockedInThisPhase([]);
+    setHintsUsed(0);
+    setHintLetters([]);
 
     // Determine grid size based on world or word max length
     const maxWordLen = Math.max(...phase.words.map(w => w.length));
-    const gridSize = Math.max(9, maxWordLen + 2, 10); // Standardize on beautiful sizing
+    const gridSize = Math.max(9, maxWordLen + 2, 10); 
 
     // Generate grid
     const generated = generateCacaPalavrasGrid(phase.words, gridSize);
@@ -140,22 +332,25 @@ export function CacaPalavras() {
 
   // Handle cell touch/click down
   const handleCellStart = (r: number, c: number) => {
+    if (isSelectionError) return; // block during error blink
     setIsSelecting(true);
     const startCoord = { r, c };
     setSelectionStart(startCoord);
     setSelectionEnd(startCoord);
     playSfx('pop');
+    triggerVibrate(30);
   };
 
   // Handle cell hover/drag movement
   const handleCellEnter = (r: number, c: number) => {
-    if (!isSelecting || !selectionStart) return;
+    if (!isSelecting || !selectionStart || isSelectionError) return;
     setSelectionEnd({ r, c });
+    triggerVibrate(20);
   };
 
   // End selection and evaluate
   const handleCellEnd = () => {
-    if (!isSelecting || !selectionStart || !selectionEnd) {
+    if (!isSelecting || !selectionStart || !selectionEnd || isSelectionError) {
       setIsSelecting(false);
       return;
     }
@@ -180,21 +375,41 @@ export function CacaPalavras() {
       if (matchedPlacedWord) {
         // MATCH SUCCESS!
         const correctWord = matchedPlacedWord.word;
-        const nextFoundMatches = [...foundWords, correctWord];
-        setFoundWords(nextFoundMatches);
+        
+        // Find consecutive colors sequence index
+        const colorSeqIdx = completedWordsList.length % WORD_COLORS.length;
 
-        // Add coords to permanently found items
-        setFoundCoords(prev => [...prev, ...matchedPlacedWord.coords]);
+        const newFoundObj: FoundWordProgress = {
+          word: correctWord,
+          colorIndex: colorSeqIdx,
+          coords: matchedPlacedWord.coords
+        };
+
+        const nextCompletedList = [...completedWordsList, newFoundObj];
+        setCompletedWordsList(nextCompletedList);
 
         playSfx('success');
+        triggerVibrate(120);
         triggerParticles();
 
         // Check level Win Condition
-        if (nextFoundMatches.length === placedWords.length) {
+        if (nextCompletedList.length === placedWords.length) {
           handleVictory();
         }
       } else {
-        // playSfx('fail');
+        // MATCH FAILED: Run incorrect state flash error red & vibration
+        setIsSelectionError(true);
+        setErrorCoords([...lineCoords]);
+        triggerVibrate(180);
+        playSfx('fail');
+
+        setTimeout(() => {
+          setIsSelectionError(false);
+          setErrorCoords([]);
+          setSelectionStart(null);
+          setSelectionEnd(null);
+        }, 500);
+        return;
       }
     }
 
@@ -202,10 +417,11 @@ export function CacaPalavras() {
     setSelectionEnd(null);
   };
 
-  // Handle level complete victory
+  // Handle Level Complete Victory
   const handleVictory = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     playSfx('victory');
+    clearLevelSave(selectedPhase!.id);
     
     // Confetti stream
     triggerConfettiExplosion();
@@ -216,13 +432,27 @@ export function CacaPalavras() {
         const { newAchievements } = completePhase(selectedPhase.id, selectedWorld.id, placedWords.length);
         setUnlockedInThisPhase(newAchievements);
         setShowVictoryModal(true);
-      }, 500);
+      }, 600);
     }
   };
 
-  // Particle feedback animation on match
+  // Sparkles blast effect on correct word match
   const triggerParticles = () => {
-    // We can show quick ambient flare or mini-blast
+    const list: FloatingSparkle[] = [];
+    const colors = ["#10B981", "#8B5CF6", "#EC4899", "#F59E0B", "#3B82F6", "#EAB308", "#EF4444"];
+    for (let i = 0; i < 20; i++) {
+      list.push({
+        id: Math.random() + i,
+        x: 10 + Math.random() * 80,
+        y: 15 + Math.random() * 70,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 4 + Math.random() * 8
+      });
+    }
+    setSparkles(list);
+    setTimeout(() => {
+      setSparkles([]);
+    }, 1200);
   };
 
   // Launch Confetti shower using simple css layout
@@ -255,6 +485,49 @@ export function CacaPalavras() {
         })).filter(p => p.y < 110)
       );
     }, 30);
+  };
+
+  // 💡 Highlight next available unselected letter tip helper
+  const handleUseHint = async () => {
+    const isFree = hintsUsed < 3;
+    if (!isFree) {
+      if (coins < 15) {
+        alert("Moedas insuficientes! Cada dica custa 15 moedas.");
+        return;
+      }
+      const success = await spendCoins(15);
+      if (!success) {
+        alert("Moedas insuficientes!");
+        return;
+      }
+    }
+
+    const nextUnfound = placedWords.filter(pw => !foundWords.includes(pw.word));
+    if (nextUnfound.length === 0) return;
+
+    // Target the first unfound word inside gameplay
+    const targetWord = nextUnfound[0];
+    
+    // Find the first letter coordinate that isn't highlighted in hintLetters yet
+    const targetLetter = targetWord.coords.find(co => 
+      !hintLetters.some(hl => hl.r === co.r && hl.c === co.c)
+    );
+
+    if (targetLetter) {
+      setHintLetters(prev => [...prev, targetLetter]);
+      setHintsUsed(prev => prev + 1);
+      triggerVibrate(80);
+      playSfx('click');
+    } else {
+      // Fallback first coordinate
+      const fbCoord = targetWord.coords[0];
+      if (fbCoord) {
+        setHintLetters(prev => [...prev, fbCoord]);
+        setHintsUsed(prev => prev + 1);
+        triggerVibrate(80);
+        playSfx('click');
+      }
+    }
   };
 
   // Go to next world phase
@@ -326,7 +599,7 @@ export function CacaPalavras() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate("/")}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md shadow-white/5"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -341,14 +614,14 @@ export function CacaPalavras() {
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                className="w-10 h-10 rounded-full bg-[#172033]/80 border border-white/10 flex items-center justify-center text-[#94A3B8] hover:text-white"
+                className="w-10 h-10 rounded-full bg-[#172033]/80 border border-white/10 flex items-center justify-center text-[#94A3B8] hover:text-white shadow-md shadow-white/5"
                 title={soundEnabled ? "Mutar Sons" : "Ativar Sons"}
               >
                 {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
               </button>
               <button 
                 onClick={() => setView("achievements")}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#172033] border border-white/10 text-xs font-black text-white hover:text-[#3B82F6] transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#172033] border border-white/10 text-xs font-black text-white hover:text-[#3B82F6] transition-all shadow-md shadow-white/5"
               >
                 <Trophy size={14} className="text-[#F59E0B]" />
                 <span className="text-[10px] tracking-wider font-extrabold">{unlockedAchievements.length}</span>
@@ -472,7 +745,7 @@ export function CacaPalavras() {
                               <button
                                 key={phase.id}
                                 onClick={() => startLevel(world, phase)}
-                                className={`flex items-center justify-between p-3.5 rounded-2xl text-left border transition-all active:scale-95 group ${
+                                className={`flex items-center justify-between p-3.5 rounded-2xl text-left border transition-all active:scale-95 group shadow-md shadow-white/5 ${
                                   isDone 
                                     ? 'bg-[#172033] hover:bg-[#172033]/80 border-emerald-500/25 text-white' 
                                     : 'bg-[#0B1220]/50 hover:bg-[#0B1220] border-white/5 hover:border-[#3B82F6]/30 text-white'
@@ -528,23 +801,23 @@ export function CacaPalavras() {
 
       {/* VIEW: ACTIVE WORD SEARCH GAMEPLAY */}
       {view === "game" && selectedWorld && selectedPhase && (
-        <div className="relative z-10 flex-1 flex flex-col w-full max-w-lg mx-auto pb-12">
+        <div className="relative z-10 flex-1 flex flex-col w-full max-w-lg mx-auto pb-12 px-4 selection:bg-transparent">
           
           {/* Header Bar */}
-          <header className="px-6 pt-10 pb-5 flex items-center justify-between border-b border-white/5 bg-[#0B1220]/80 backdrop-blur-xl sticky top-0 z-30">
+          <header className="pt-10 pb-5 flex items-center justify-between border-b border-white/5 bg-[#0B1220]/80 backdrop-blur-xl sticky top-0 z-30">
             <button 
               onClick={() => {
                 if (confirm("Deseja sair do jogo em andamento? Seu progresso nesta fase não será salvo.")) {
                   setView("worlds");
                 }
               }}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md shadow-white/5"
             >
               <ArrowLeft size={18} />
             </button>
             
             <div className="flex flex-col items-center">
-              <span className="text-[10px] text-amber-500 font-extrabold uppercase tracking-[0.15em] flex items-center gap-1">
+              <span className="text-[10px] text-amber-500 font-extrabold uppercase tracking-[0.14em] flex items-center gap-1">
                 <span>{selectedWorld.icon}</span> {selectedWorld.name}
               </span>
               <h2 className="text-base font-extrabold text-white truncate max-w-[150px]">
@@ -559,13 +832,52 @@ export function CacaPalavras() {
           </header>
 
           {/* Sizing of grid wrapper */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 no-scrollbar flex flex-col justify-between">
+          <div className="flex-1 overflow-y-auto pt-4 pb-6 space-y-6 no-scrollbar flex flex-col justify-between">
             
+            {/* Control Row with Zoom & Hints */}
+            <div className="flex justify-between items-center bg-[#172033]/60 border border-white/5 rounded-2xl p-2.5 shadow-lg">
+              {/* Zoom Buttons */}
+              <div className="flex items-center gap-1.5 rounded-full bg-[#0B1220] p-1 border border-white/10 shadow-inner">
+                <button 
+                  onClick={decreaseZoom} 
+                  disabled={zoomLevel === 'sm'}
+                  className="w-7 h-7 rounded-full bg-[#172033] hover:text-[#3B82F6] disabled:opacity-30 border border-white/5 flex items-center justify-center font-bold text-xs shadow-none"
+                  title="Diminuir Letras"
+                >
+                  A-
+                </button>
+                <span className="text-[10px] font-black uppercase text-[#94A3B8] px-1 bg-[#172033]/45 rounded py-0.5 min-w-[54px] text-center">
+                  {zoomConfig[zoomLevel].label}
+                </span>
+                <button 
+                  onClick={increaseZoom} 
+                  disabled={zoomLevel === 'xl'}
+                  className="w-7 h-7 rounded-full bg-[#172033] hover:text-[#3B82F6] disabled:opacity-30 border border-white/5 flex items-center justify-center font-bold text-xs shadow-none"
+                  title="Aumentar Letras"
+                >
+                  A+
+                </button>
+              </div>
+
+              {/* 💡 Hint Button */}
+              <button
+                onClick={handleUseHint}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/30 text-amber-300 font-extrabold text-[11px] uppercase tracking-wider transition-all scale-100 hover:scale-102 active:scale-95 shadow-md shadow-amber-500/5"
+              >
+                <span>💡</span>
+                {hintsUsed < 3 ? (
+                  <span>Dica Rápida ({3 - hintsUsed}/3)</span>
+                ) : (
+                  <span className="flex items-center gap-1">Dica (+15 🪙)</span>
+                )}
+              </button>
+            </div>
+
             {/* Found word count info */}
             <div className="flex justify-between items-baseline px-1.5">
               <span className="text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                Encontre as Palavras listadas
+                Encontre as Palavras
               </span>
               <span className="text-emerald-400 text-xs font-black tracking-widest bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
                 {foundWords.length} / {placedWords.length} ENCONTRADAS
@@ -573,38 +885,139 @@ export function CacaPalavras() {
             </div>
 
             {/* Interactive Grid Card */}
-            <div className="bg-[#172033]/90 border border-white/10 rounded-[28px] p-4 shadow-2xl relative">
+            <div className="bg-[#172033]/90 border border-white/10 rounded-[28px] p-4 shadow-2xl relative overflow-auto no-scrollbar flex justify-center items-center">
+              
+              {/* Connected active selection line overlay */}
+              {isSelecting && selectionStart && selectionEnd && (
+                <svg className="absolute inset-0 pointer-events-none z-20 w-full h-full">
+                  <line
+                    x1={`${((selectionStart.c + 0.5) / grid.length) * 100}%`}
+                    y1={`${((selectionStart.r + 0.5) / grid.length) * 100}%`}
+                    x2={`${((selectionEnd.c + 0.5) / grid.length) * 100}%`}
+                    y2={`${((selectionEnd.r + 0.5) / grid.length) * 100}%`}
+                    stroke="rgba(245, 158, 11, 0.45)"
+                    strokeWidth={grid.length > 10 ? "18" : "24"}
+                    strokeLinecap="round"
+                    className="animate-pulse"
+                    style={{ filter: "drop-shadow(0 0 8px rgba(245, 158, 11, 0.5))" }}
+                  />
+                </svg>
+              )}
+
+              {/* Connected permanent lines overlay for found words */}
+              {completedWordsList.map((cw, idx) => {
+                const start = cw.coords[0];
+                const end = cw.coords[cw.coords.length - 1];
+                const color = WORD_COLORS[cw.colorIndex];
+                if (!start || !end) return null;
+                return (
+                  <svg key={`${cw.word}-${idx}`} className="absolute inset-0 pointer-events-none z-10 w-full h-full">
+                    <line
+                      x1={`${((start.c + 0.5) / grid.length) * 100}%`}
+                      y1={`${((start.r + 0.5) / grid.length) * 100}%`}
+                      x2={`${((end.c + 0.5) / grid.length) * 100}%`}
+                      y2={`${((end.r + 0.5) / grid.length) * 100}%`}
+                      stroke={color.hex}
+                      strokeWidth={grid.length > 10 ? "13" : "18"}
+                      strokeLinecap="round"
+                      className="opacity-40"
+                      style={{ filter: `drop-shadow(0 0 4px ${color.hex})` }}
+                    />
+                  </svg>
+                );
+              })}
+
+              {/* Sparkles match sparks overlay */}
+              {sparkles.map(sp => (
+                <div
+                  key={sp.id}
+                  className="absolute rounded-full animate-ping pointer-events-none z-35"
+                  style={{
+                    left: `${sp.x}%`,
+                    top: `${sp.y}%`,
+                    width: `${sp.size}px`,
+                    height: `${sp.size}px`,
+                    backgroundColor: sp.color,
+                    boxShadow: `0 0 10px ${sp.color}`,
+                    animationDuration: '1s'
+                  }}
+                />
+              ))}
+
               <div 
                 className="grid gap-[4px] relative"
                 style={{ 
                   gridTemplateColumns: `repeat(${grid.length}, minmax(0, 1fr))`,
                   touchAction: "none" // disable native mobile scroll during drags
                 }}
+                onPointerDown={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target && target.getAttribute("data-cell") === "true") {
+                    try {
+                      target.releasePointerCapture(e.pointerId);
+                    } catch (_) {}
+                    const r = parseInt(target.getAttribute("data-row") || "0", 10);
+                    const c = parseInt(target.getAttribute("data-col") || "0", 10);
+                    handleCellStart(r, c);
+                  }
+                }}
+                onPointerMove={(e) => {
+                  if (!isSelecting) return;
+                  const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
+                  if (target && target.getAttribute("data-cell") === "true") {
+                    const r = parseInt(target.getAttribute("data-row") || "0", 10);
+                    const c = parseInt(target.getAttribute("data-col") || "0", 10);
+                    handleCellEnter(r, c);
+                  }
+                }}
+                onPointerUp={handleCellEnd}
                 onPointerLeave={handleCellEnd}
               >
                 {grid.map((rowArr, rIdx) => 
                   rowArr.map((char, cIdx) => {
-                    const isCoordFound = foundCoords.some(co => co.r === rIdx && co.c === cIdx);
+                    // Check if cel is found
+                    const cellFoundInfo = [...completedWordsList].reverse().find(cw => 
+                      cw.coords.some(co => co.r === rIdx && co.c === cIdx)
+                    );
+                    const isCoordFound = !!cellFoundInfo;
+                    const foundColor = cellFoundInfo ? WORD_COLORS[cellFoundInfo.colorIndex] : null;
                     
                     // Highlight logic for active selection
                     const isSelectedNow = selectionCoords.some(co => co.r === rIdx && co.c === cIdx);
 
+                    // Check error status blinking
+                    const isCellInError = isSelectionError && errorCoords.some(co => co.r === rIdx && co.c === cIdx);
+
+                    // Hint indicator
+                    const isCellHinted = hintLetters.some(hl => hl.r === rIdx && hl.c === cIdx) && !isCoordFound;
+
+                    // Compute dynamic classes
+                    let cellClasses = "flex items-center justify-center font-bold select-none cursor-pointer border transition-all duration-150 rounded-lg shadow-none ";
+                    let cellStyles: React.CSSProperties = {};
+
+                    if (isCellInError) {
+                      cellClasses += "bg-red-500 border-red-400 text-white animate-pulse scale-95 shadow-lg shadow-red-500/20";
+                    } else if (isCoordFound && foundColor) {
+                      cellClasses += `${foundColor.bg} ${foundColor.text} ${foundColor.border} font-black scale-95`;
+                      cellStyles = {
+                        boxShadow: `inset 0 0 6px rgba(${foundColor.rgb || "255,255,255"}, 0.1), 0 0 10px rgba(${foundColor.rgb || "255,255,255"}, 0.08)`
+                      };
+                    } else if (isSelectedNow) {
+                      cellClasses += "bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 border-amber-500 scale-105 font-black shadow-lg shadow-amber-500/25";
+                    } else if (isCellHinted) {
+                      cellClasses += "bg-amber-400/25 text-amber-300 border-amber-400/50 font-black animate-bounce scale-102 shadow-md shadow-amber-400/10";
+                    } else {
+                      cellClasses += "bg-slate-900/55 hover:bg-slate-900/80 text-[#E2E8F0] border-white/5 font-semibold hover:text-white";
+                    }
+
                     return (
                       <div
                         key={coordKey(rIdx, cIdx)}
-                        onPointerDown={() => handleCellStart(rIdx, cIdx)}
-                        onPointerEnter={() => handleCellEnter(rIdx, cIdx)}
-                        onPointerUp={handleCellEnd}
-                        className={`aspect-square w-full rounded-lg flex items-center justify-center font-bold text-sm select-none cursor-pointer border transition-all duration-150 ${
-                          isCoordFound 
-                            ? 'bg-gradient-to-br from-[#10B981] to-emerald-700 text-white border-emerald-500 shadow-md font-black shadow-emerald-500/10 scale-95' 
-                            : isSelectedNow
-                              ? 'bg-gradient-to-br from-amber-400 to-[#F59E0B] text-[#0B1220] border-[#F59E0B] scale-105 font-black shadow-lg shadow-amber-500/20'
-                              : 'bg-[#0B1220]/60 hover:bg-[#0B1220]/90 text-[#E2E8F0] border-white/5 font-semibold hover:text-white'
-                        }`}
-                        style={{
-                          fontSize: grid.length > 10 ? '11px' : '13px'
-                        }}
+                        data-cell="true"
+                        data-row={rIdx}
+                        data-col={cIdx}
+                        className={`${cellClasses} ${zoomConfig[zoomLevel].cell} ${zoomConfig[zoomLevel].font}`}
+                        style={cellStyles}
                       >
                         {char}
                       </div>
@@ -614,21 +1027,28 @@ export function CacaPalavras() {
               </div>
             </div>
 
-            {/* Target Words beneath */}
+            {/* Target Words beneath (color-matched checklist) */}
             <div className="bg-[#172033]/40 border border-white/5 rounded-[24px] p-5">
               <div className="flex flex-wrap gap-2.5 justify-center">
-                {placedWords.map(pw => {
-                  const done = foundWords.includes(pw.word);
+                {placedWords.map((pw, idx) => {
+                  const doneObj = completedWordsList.find(cw => cw.word === pw.word);
+                  const isDone = !!doneObj;
+                  const color = doneObj ? WORD_COLORS[doneObj.colorIndex] : null;
+
                   return (
                     <span 
-                      key={pw.word}
-                      className={`text-xs px-3.5 py-1.8 rounded-xl font-extrabold uppercase tracking-widest border transition-all ${
-                        done 
-                          ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 line-through opacity-70' 
-                          : 'bg-[#172033] border-white/10 text-white shadow-sm'
+                      key={`${pw.word}-${idx}`}
+                      className={`text-xs px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-widest border transition-all flex items-center gap-1.5 select-none shadow-none ${
+                        isDone && color
+                          ? `${color.bg} ${color.text} ${color.border} line-through opacity-85 shadow-[0_0_8px_rgba(${color.rgb || "255,255,255"},0.12)]` 
+                          : 'bg-[#172033] border-white/10 text-white'
                       }`}
                     >
-                      {pw.word}
+                      {isDone ? (
+                        <span className="flex items-center gap-1">✔ {pw.word}</span>
+                      ) : (
+                        <span>{pw.word}</span>
+                      )}
                     </span>
                   );
                 })}
@@ -643,7 +1063,7 @@ export function CacaPalavras() {
                     startLevel(selectedWorld, selectedPhase);
                   }
                 }}
-                className="text-[11px] text-[#94A3B8] hover:text-[#3B82F6] font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 mx-auto"
+                className="text-[11px] text-[#94A3B8] hover:text-[#3B82F6] font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 mx-auto bg-transparent border-none shadow-none"
               >
                 <RefreshCw size={11} /> Reiniciar Fase
               </button>
@@ -661,7 +1081,7 @@ export function CacaPalavras() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setView("worlds")}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#172033] hover:text-[#3B82F6] hover:bg-white/5 transition-all border border-white/10 active:scale-95 shadow-md shadow-white/5"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -791,9 +1211,9 @@ export function CacaPalavras() {
               <div className="space-y-2 pt-2">
                 <button 
                   onClick={handleNextPhase}
-                  className="w-full bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-2xl shadow-lg shadow-[#3B82F6]/20 transition-all cursor-pointer transform hover:-translate-y-0.5"
+                  className="w-full bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-2xl shadow-lg shadow-[#3B82F6]/20 transition-all cursor-pointer transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                 >
-                  Próxima Fase
+                  Próxima Fase <ChevronRight size={14} />
                 </button>
                 <button 
                   onClick={() => startLevel(selectedWorld, selectedPhase)}
