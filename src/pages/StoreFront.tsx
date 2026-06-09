@@ -18,7 +18,7 @@ const games = [
     subtitle: "Derrube os leões e proteja as ovelhas",
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTuvFaeyJExAWE0M2434mXzDOhPMsEAH85cA&s",
     rating: "4.8",
-    action: "https://ais-dev-y73d54wnkuw2j76fdnnou4-111465990999.us-east1.run.app/"
+    action: "https://kingdavid2d.vercel.app/"
   },
   {
     id: 2,
