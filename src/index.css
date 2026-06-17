@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&family=Georgia:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400..900&family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@500;700;900&family=Helvetica+Neue:wght@400;700&family=Georgia:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400..900&family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -8,6 +8,8 @@
   --font-serif: "Georgia", ui-serif, serif;
   --font-game: "Orbitron", sans-serif;
   --font-pixel: "'Press Start 2P'", cursive;
+  --font-medieval: "MedievalSharp", cursive;
+  --font-cinzel: "Cinzel", serif;
   
   --color-brand-bg: #0B1220;
   --color-brand-card: #172033;
@@ -144,3 +146,16 @@ button {
 button:hover {
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.38);
 }
+
+/* Eradicate any browser focus shapes, tap highlights, or default cyan-blue outlines on interactive components */
+canvas, button, [tabindex], .animate-neon-blue-green {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Preserve shadows strictly on custom classes safely */
+.neumorphic-shadow {
+  box-shadow: 8px 8px 16px rgba(107, 27, 58, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.8) !important;
+}
+

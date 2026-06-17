@@ -5,6 +5,9 @@ import { Bell, Lightbulb, Star, ChevronRight, Leaf, Play, BookOpen, Brain, Spark
 import { useCacaPalavrasStore } from '../store/useCacaPalavrasStore';
 import { useAppStore } from '../store/useAppStore';
 
+import davidShepherdImg from '../assets/images/david_shepherd_1781357759499.jpg';
+import davidKingImg from '../assets/images/david_king_1781357773803.jpg';
+
 const verses = [
   { img: "https://www.heroesbibletrivia.org/wp-content/uploads/2021/01/facebook.jpg", title: "Game Store Bible", subtitle: "Bem-vindo ao acervo cristão" },
   { img: "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&q=80&w=800", title: "Amor de Deus", subtitle: "João 3:16" },
@@ -16,16 +19,16 @@ const games = [
     id: 1,
     title: "King David 2D",
     subtitle: "Derrube os leões e proteja as ovelhas",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTuvFaeyJExAWE0M2434mXzDOhPMsEAH85cA&s",
+    img: davidShepherdImg,
     rating: "4.8",
-    action: "https://kingdavid2d.vercel.app/"
+    action: "king-david-game"
   },
   {
     id: 2,
     title: "King David 3D",
     subtitle: "Ação em terceira pessoa como o Rei de Israel",
     rating: "4.9",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRceIN3FTl_2bk9ZVs-mrfbPs0HMeDdyIA1iUI0H414oA&s",
+    img: davidKingImg,
     action: "https://king-david3d.vercel.app/"
   }
 ];
@@ -153,6 +156,8 @@ export function StoreFront() {
       navigate('/word-of-the-day');
     } else if (action === 'caca_palavras') {
       navigate('/caca-palavras');
+    } else if (action === 'king-david-game') {
+      navigate('/king-david-game');
     } else if (action === 'plan') {
       navigate('/bible/plan');
     } else if (action === 'favorites') {

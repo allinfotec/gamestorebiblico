@@ -16,6 +16,7 @@ import { SplashScreen } from './components/SplashScreen';
 import { StoreFront } from './pages/StoreFront';
 import { WordOfTheDay } from './pages/WordOfTheDay';
 import { CacaPalavras } from './pages/CacaPalavras';
+import { KingDavidGame } from './pages/KingDavidGame';
 
 export default function App() {
   const { hydrate: hydrateApp } = useAppStore();
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/" element={<StoreFront />} />
           <Route path="/word-of-the-day" element={<WordOfTheDay />} />
           <Route path="/caca-palavras" element={<CacaPalavras />} />
+          <Route path="/king-david-game" element={<KingDavidGame />} />
           
           <Route path="/bible" element={<Layout />}>
             <Route index element={<Home />} />
