@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Lightbulb, Star, ChevronRight, Leaf, Play, BookOpen, Brain, Sparkles, Heart, FileText, Settings, X, Trash2, Moon, Sun, Check, MessageSquare, ShieldAlert, Trophy, Gift } from 'lucide-react';
+import { Bell, Lightbulb, Star, ChevronRight, Leaf, Play, BookOpen, Brain, Sparkles, Heart, FileText, Settings, X, Trash2, Moon, Sun, Check, MessageSquare, ShieldAlert, Trophy, Gift, RefreshCw, ArrowDown } from 'lucide-react';
 import { useCacaPalavrasStore } from '../store/useCacaPalavrasStore';
 import { useAppStore } from '../store/useAppStore';
 
@@ -80,11 +80,107 @@ export function StoreFront() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [expandedNotificationId, setExpandedNotificationId] = useState<number | null>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const startYRef = React.useRef<number | null>(null);
+  const isDraggingRef = React.useRef(false);
+
   const [notifications, setNotifications] = useState([
+    { id: 5, title: '🎁 Atualização Disponível!', text: 'Melhorias de desempenho prontas! Deslize/puxe a tela inicial de cima para baixo para carregar os novos ajustes.', date: 'Agora', read: false },
     { id: 1, title: 'Bíblia Atualizada', text: 'Estudos bíblicos integrados à Inteligência Artificial disponíveis.', date: 'Hoje', read: false },
     { id: 2, title: 'Progresso Diário', text: 'Não se esqueça de ler o Versículo do Dia!', date: 'Hoje', read: false },
     { id: 3, title: 'Novo Jogo Liberado', text: 'Modo Caça-Palavras com novos temas de sabedoria.', date: 'Ontem', read: true }
   ]);
+
+  const triggerRefresh = () => {
+    setIsRefreshing(true);
+    setPullDistance(60);
+    
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setPullDistance(0);
+      
+      setNotifications(prev => prev.map(n => {
+        if (n.id === 5) {
+          return {
+            ...n,
+            title: '✅ Versão Instalada com Sucesso!',
+            text: 'O aplicativo foi atualizado com as últimas correções e novidades de interface neon!',
+            date: 'Agora',
+            read: false
+          };
+        }
+        return n;
+      }));
+      
+      showToast('✨ Aplicativo totalmente atualizado!');
+    }, 1800);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (scrollContainerRef.current && scrollContainerRef.current.scrollTop === 0 && !isRefreshing) {
+      startYRef.current = e.touches[0].clientY;
+      isDraggingRef.current = true;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current || startYRef.current === null || isRefreshing) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - startYRef.current;
+    
+    if (diff > 0) {
+      const dampedDistance = Math.min(diff * 0.45, 110);
+      setPullDistance(dampedDistance);
+    } else {
+      setPullDistance(0);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    startYRef.current = null;
+    
+    if (pullDistance > 55) {
+      triggerRefresh();
+    } else {
+      setPullDistance(0);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (scrollContainerRef.current && scrollContainerRef.current.scrollTop === 0 && !isRefreshing) {
+      startYRef.current = e.clientY;
+      isDraggingRef.current = true;
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current || startYRef.current === null || isRefreshing) return;
+    const diff = e.clientY - startYRef.current;
+    if (diff > 0) {
+      const dampedDistance = Math.min(diff * 0.45, 110);
+      setPullDistance(dampedDistance);
+    } else {
+      setPullDistance(0);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    startYRef.current = null;
+    
+    if (pullDistance > 55) {
+      triggerRefresh();
+    } else {
+      setPullDistance(0);
+    }
+  };
 
   const hasUnreadNotification = notifications.some(n => !n.read);
 
@@ -108,6 +204,7 @@ export function StoreFront() {
 
   const toggleReadNotification = (id: number) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    setExpandedNotificationId(prev => prev === id ? null : id);
   };
 
   const clearAllNotifications = () => {
@@ -318,10 +415,60 @@ export function StoreFront() {
           </div>
         </header>
 
+        {/* PULL TO REFRESH NEON INDICATOR */}
+        {(pullDistance > 0 || isRefreshing) && (
+          <div 
+            className="absolute left-0 right-0 flex justify-center items-center z-30 pointer-events-none transition-all duration-300"
+            style={{ 
+              top: '120px', 
+              opacity: Math.min(pullDistance / 50, 1),
+              transform: `scale(${Math.min(0.6 + (pullDistance / 115), 1)})`
+            }}
+          >
+            <div className={`px-4 py-2 rounded-full border flex items-center gap-2.5 backdrop-blur-md shadow-[0_12px_24px_rgba(34,197,94,0.2)] transition-all ${
+              isDarkMode 
+                ? 'bg-gradient-to-r from-emerald-950/85 to-[#0b1220]/95 border-emerald-500/40 text-emerald-400' 
+                : 'bg-gradient-to-r from-emerald-50 to-white border-emerald-300 text-emerald-700'
+            }`}>
+              <div className="relative flex items-center justify-center">
+                {isRefreshing ? (
+                  <RefreshCw className="animate-spin text-emerald-400 shrink-0" size={16} strokeWidth={2.5} />
+                ) : (
+                  <motion.div
+                    animate={{ y: pullDistance > 55 ? [-2, 2, -2] : 0 }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                  >
+                    <ArrowDown className={`transition-transform duration-300 ${pullDistance > 55 ? 'rotate-180 text-emerald-400' : 'text-emerald-500'}`} size={16} strokeWidth={2.5} />
+                  </motion.div>
+                )}
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest font-sans">
+                {isRefreshing 
+                  ? 'Atualizando...' 
+                  : pullDistance > 55 
+                    ? 'Solte para Atualizar!' 
+                    : 'Puxe para Atualizar'}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* CONTAINER DE SCROLL - APENAS ESTA SEÇÃO DE CONTEÚDO ROLA POR TRÁS DO HEADER */}
         <div 
+          ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="h-full w-full overflow-y-auto no-scrollbar pb-32 px-6 pt-[115px] space-y-8"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="h-full w-full overflow-y-auto no-scrollbar pb-32 px-6 pt-[115px] space-y-8 select-none"
+          style={{
+            transform: pullDistance > 0 ? `translateY(${pullDistance}px)` : 'none',
+            transition: isDraggingRef.current ? 'none' : 'transform 0.4s cubic-bezier(0.19, 1, 0.22, 1)'
+          }}
         >
           {/* BANNER PRINCIPAL (ALTURA ENTRE 180 E 220 PIXELS) */}
           <section className="w-full">
@@ -815,30 +962,157 @@ export function StoreFront() {
                     </p>
                   </div>
                 ) : (
-                  notifications.map((n) => (
-                    <div 
-                      key={n.id}
-                      onClick={() => toggleReadNotification(n.id)}
-                      className={`relative p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-1.5 ${
-                        isDarkMode 
-                          ? n.read 
-                            ? 'bg-white/5 border-white/5 hover:bg-white/10 opacity-75 text-slate-400' 
-                            : 'bg-[#172033]/90 border-[#3B82F6]/20 hover:border-[#3B82F6]/40 shadow-[0_4px_16px_rgba(59,130,246,0.08)] text-white' 
-                          : n.read
-                            ? 'bg-slate-50 border-slate-200/40 hover:bg-slate-100 opacity-75 text-slate-500'
-                            : 'bg-blue-50/50 border-blue-100 hover:border-blue-200 shadow-[0_4px_16px_rgba(59,130,246,0.03)] text-slate-800'
-                      }`}
-                    >
-                      {!n.read && (
-                        <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#3B82F6]"></span>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400'}`}>{n.date}</span>
-                      </div>
-                      <h4 className={`text-[13px] font-extrabold transition-colors duration-500 ${n.read ? (isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400') : (isDarkMode ? 'text-white' : 'text-slate-800')}`}>{n.title}</h4>
-                      <p className={`text-xs leading-normal font-medium transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{n.text}</p>
-                    </div>
-                  ))
+                  notifications.map((n) => {
+                    const isExpanded = expandedNotificationId === n.id;
+                    return (
+                      <motion.div 
+                        key={n.id}
+                        layout
+                        onClick={() => toggleReadNotification(n.id)}
+                        className={`relative p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-1.5 overflow-hidden ${
+                          isDarkMode 
+                            ? n.id === 5
+                              ? 'bg-gradient-to-br from-[#122A22] to-[#0D1527] border-emerald-500/40 shadow-[0_4px_20px_rgba(34,197,94,0.15)] text-white'
+                              : n.read 
+                                ? 'bg-white/5 border-white/5 hover:bg-white/10 opacity-75 text-slate-400' 
+                                : 'bg-[#172033]/90 border-[#3B82F6]/20 hover:border-[#3B82F6]/40 shadow-[0_4px_16px_rgba(59,130,246,0.08)] text-white' 
+                            : n.id === 5
+                              ? 'bg-gradient-to-br from-emerald-50/70 to-white border-emerald-300 shadow-[0_4px_20px_rgba(34,197,94,0.08)] text-slate-800'
+                              : n.read
+                                ? 'bg-slate-50 border-slate-200/40 hover:bg-slate-100 opacity-75 text-slate-500'
+                                : 'bg-blue-50/50 border-blue-100 hover:border-blue-200 shadow-[0_4px_16px_rgba(59,130,246,0.03)] text-slate-800'
+                        }`}
+                      >
+                        {!n.read && (
+                          <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        )}
+                        {!n.read && (
+                          <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-emerald-500"></span>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-emerald-400/80' : 'text-emerald-600'}`}>{n.date}</span>
+                        </div>
+                        <h4 className={`text-[13px] font-extrabold transition-colors duration-500 ${n.read ? (isDarkMode ? 'text-[#94A3B8]' : 'text-slate-400') : (isDarkMode ? 'text-white' : 'text-slate-800')}`}>{n.title}</h4>
+                        <p className={`text-xs leading-normal font-medium transition-colors ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{n.text}</p>
+                        
+                        {/* Interactive Tutorial for Pull to Refresh */}
+                        {isExpanded && n.id === 5 && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className={`mt-3 pt-3 border-t overflow-hidden flex flex-col gap-3.5 ${
+                              isDarkMode ? 'border-white/5' : 'border-slate-100'
+                            }`}
+                            onClick={(e) => e.stopPropagation()} // Prevent collapse when clicking inside the panel
+                          >
+                            <div className={`p-4 rounded-xl flex flex-col items-center justify-center gap-3 relative border overflow-hidden ${
+                              isDarkMode 
+                                ? 'bg-[#0b1220]/70 border-emerald-500/25' 
+                                : 'bg-white border-emerald-250/30 shadow-inner'
+                            }`}>
+                              {/* Animated Demonstration Viewport/Mockup */}
+                              <div className="relative w-full h-[125px] bg-slate-950/50 rounded-lg overflow-hidden border border-slate-700/20 flex flex-col items-center justify-center">
+                                {/* Top status bar mockup */}
+                                <div className="absolute top-0 left-0 right-0 h-5 bg-black/15 flex items-center justify-between px-2.5 text-[8px] font-mono opacity-50 select-none">
+                                  <span>APP ATIVO PULL</span>
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span>CONECTADO</span>
+                                  </div>
+                                </div>
+                                
+                                {/* Dragging finger and animated arrow flow */}
+                                <div className="relative flex flex-col items-center justify-center h-full w-full pt-4">
+                                  {/* Multi Arrow flow indicator */}
+                                  <div className="absolute top-6 flex flex-col items-center -space-y-1">
+                                    {[0, 1, 2].map((idx) => (
+                                      <motion.span
+                                        key={idx}
+                                        animate={{ 
+                                          opacity: [0.15, 0.85, 0.15],
+                                          y: [0, 6, 0] 
+                                        }}
+                                        transition={{ 
+                                          repeat: Infinity, 
+                                          duration: 1.5, 
+                                          delay: idx * 0.35,
+                                          ease: "easeInOut"
+                                        }}
+                                        className="text-emerald-400 font-black text-xs leading-none"
+                                      >
+                                        ⬇
+                                      </motion.span>
+                                    ))}
+                                  </div>
+
+                                  {/* Simulated screen surface being dragged */}
+                                  <motion.div
+                                    animate={{ 
+                                      height: [0, 48, 0],
+                                      opacity: [0, 0.95, 0.95, 0]
+                                    }}
+                                    transition={{
+                                      repeat: Infinity,
+                                      duration: 2.2,
+                                      ease: "linear"
+                                    }}
+                                    className="absolute top-5 left-1/2 -translate-x-1/2 w-[85%] bg-gradient-to-b from-emerald-500/10 to-transparent border-t border-dashed border-emerald-400/40 rounded-b-md"
+                                  />
+
+                                  {/* Pointer finger indicator */}
+                                  <motion.div
+                                    animate={{ 
+                                      y: [-12, 36], 
+                                      opacity: [0, 1, 1, 0],
+                                      scale: [0.85, 1.15, 1, 0.85]
+                                    }}
+                                    transition={{ 
+                                      repeat: Infinity, 
+                                      duration: 2.2, 
+                                      ease: "easeInOut" 
+                                    }}
+                                    className="absolute w-5 h-5 rounded-full bg-emerald-500/45 border border-emerald-400 shadow-[0_0_15px_rgba(34,197,94,0.7)] flex items-center justify-center"
+                                    style={{ left: 'calc(50% - 10px)' }}
+                                  >
+                                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                  </motion.div>
+                                </div>
+
+                                <span className="absolute bottom-1.5 text-[8px] font-black font-sans tracking-widest text-[#4ADE80] animate-pulse">
+                                  DESLIZE PARA BAIXO
+                                </span>
+                              </div>
+
+                              <p className={`text-[10.5px] leading-relaxed font-semibold text-center select-none ${
+                                isDarkMode ? 'text-slate-300' : 'text-slate-600'
+                              }`}>
+                                Feche esta aba e arrastar a tela inicial <span className="text-emerald-500 font-extrabold">de cima para baixo</span> para recarregar o aplicativo instantaneamente!
+                              </p>
+
+                              {/* Button to simulate the refresh action directly from notification list */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setIsNotificationsOpen(false);
+                                  setTimeout(() => {
+                                    if (scrollContainerRef.current) {
+                                      scrollContainerRef.current.scrollTop = 0;
+                                    }
+                                    triggerRefresh();
+                                  }, 300);
+                                }}
+                                className="w-full mt-1.5 py-2.5 px-4 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 hover:from-emerald-600 hover:to-green-500 text-[#070c18] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all shadow-[0_4px_14px_rgba(34,197,94,0.25)] hover:shadow-[0_6px_22px_rgba(34,197,94,0.45)] border border-emerald-300/30 cursor-pointer"
+                              >
+                                <RefreshCw size={13} className="animate-spin text-[#070c18]" />
+                                Testar Recarga Agora
+                              </button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    );
+                  })
                 )}
               </div>
             </motion.div>
