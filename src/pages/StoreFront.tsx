@@ -332,8 +332,8 @@ export function StoreFront() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-                className={`relative h-[200px] w-full rounded-[24px] overflow-hidden border transition-all duration-500 flex flex-col group cursor-pointer animate-neon-blue-green ${
-                  isDarkMode ? 'border-[#3B82F6]/30' : 'border-blue-200/50'
+                className={`relative h-[200px] w-full rounded-[24px] overflow-hidden border transition-all duration-500 flex flex-col group cursor-pointer animate-neon-green-pulse-soft ${
+                  isDarkMode ? 'border-emerald-500/25' : 'border-emerald-250/20'
                 }`}
               >
                 <img src={verses[currentBanner].img} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[8s] group-hover:scale-105" alt="Hero" />
@@ -388,10 +388,10 @@ export function StoreFront() {
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCardClick('word_of_day')}
-              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex flex-col gap-3 transition-all duration-500 animate-neon-green-pulse ${
+              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex flex-col gap-3 transition-all duration-500 animate-neon-green-pulse-soft ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-[#1E1B4B] via-[#0F172A] to-[#1E293B] border-[#22C55E]/30' 
-                  : 'bg-gradient-to-br from-[#EEF2FF] via-white to-[#F8FAFC] border-emerald-200/50'
+                  ? 'bg-gradient-to-br from-[#121B30] via-[#0D1527] to-[#121B30] border-emerald-500/25' 
+                  : 'bg-gradient-to-br from-[#EEF2FF] via-white to-[#F8FAFC] border-emerald-250/35'
               }`}
             >
               <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-25 bg-[url('https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?auto=format&fit=crop&q=80&w=400')] bg-cover bg-center pointer-events-none rounded-r-[24px]" />
@@ -433,10 +433,10 @@ export function StoreFront() {
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCardClick('caca_palavras')}
-              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex items-center justify-between gap-4 transition-all duration-500 animate-neon-green-pulse ${
+              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex items-center justify-between gap-4 transition-all duration-500 animate-neon-green-pulse-soft ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-[#172033] to-[#0F172A] border-emerald-500/30' 
-                  : 'bg-white border-emerald-200/50'
+                  ? 'bg-gradient-to-br from-[#121B30] to-[#0D1527] border-emerald-500/25' 
+                  : 'bg-white border-emerald-250/35 shadow-sm'
               }`}
             >
               <div className={`absolute -right-12 -bottom-12 w-32 h-32 rounded-full blur-2xl group-hover:opacity-15 transition-all pointer-events-none ${isDarkMode ? 'bg-[#f59e0b]/10' : 'bg-blue-500/5'}`} />
@@ -605,7 +605,7 @@ export function StoreFront() {
                   key={item.id}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleCardClick(item.id)}
-                  className={`bg-gradient-to-r ${isDarkMode ? item.colorDark : item.colorLight} border p-3.5 rounded-2xl cursor-pointer hover:scale-[1.01] transition-all duration-500 flex items-center justify-between gap-4 group hover:animate-neon-green-pulse`}
+                  className={`bg-gradient-to-r ${isDarkMode ? item.colorDark : item.colorLight} border p-3.5 rounded-2xl cursor-pointer hover:scale-[1.01] transition-all duration-500 flex items-center justify-between gap-4 group animate-neon-green-pulse-soft`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img 
@@ -642,10 +642,10 @@ export function StoreFront() {
               <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors duration-500 ${isDarkMode ? 'text-[#3B82F6]' : 'text-blue-600'}`}>RANKING</span>
             </div>
             
-            <div className={`border p-4 rounded-[24px] space-y-4 shadow-inner transition-all duration-500 animate-neon-blue-green ${
+            <div className={`border p-4 rounded-[24px] space-y-4 shadow-inner transition-all duration-500 animate-neon-green-pulse-soft ${
               isDarkMode 
-                ? 'bg-[#172033]/60 border-[#3B82F6]/30' 
-                : 'bg-white border-blue-200/50 shadow-[0_8px_30px_rgba(0,0,0,0.03)]'
+                ? 'bg-[#121B30]/60 border-emerald-500/25' 
+                : 'bg-white border-emerald-250/35 shadow-sm'
             }`}>
               <div className="grid grid-cols-3 gap-2">
                 <div className={`p-3 rounded-2xl flex flex-col items-center text-center border transition-all duration-500 ${
