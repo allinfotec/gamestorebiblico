@@ -388,10 +388,10 @@ export function StoreFront() {
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCardClick('word_of_day')}
-              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex flex-col gap-3 transition-all duration-500 animate-neon-blue-green ${
+              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex flex-col gap-3 transition-all duration-500 animate-neon-green-pulse ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-[#1E1B4B] via-[#0F172A] to-[#1E293B] border-[#3B82F6]/30' 
-                  : 'bg-gradient-to-br from-[#EEF2FF] via-white to-[#F8FAFC] border-blue-200/50'
+                  ? 'bg-gradient-to-br from-[#1E1B4B] via-[#0F172A] to-[#1E293B] border-[#22C55E]/30' 
+                  : 'bg-gradient-to-br from-[#EEF2FF] via-white to-[#F8FAFC] border-emerald-200/50'
               }`}
             >
               <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-25 bg-[url('https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?auto=format&fit=crop&q=80&w=400')] bg-cover bg-center pointer-events-none rounded-r-[24px]" />
@@ -433,10 +433,10 @@ export function StoreFront() {
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCardClick('caca_palavras')}
-              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex items-center justify-between gap-4 transition-all duration-500 animate-neon-blue-green ${
+              className={`relative rounded-[24px] border p-5 overflow-hidden cursor-pointer group flex items-center justify-between gap-4 transition-all duration-500 animate-neon-green-pulse ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-[#172033] to-[#0F172A] border-[#3B82F6]/30' 
-                  : 'bg-white border-blue-200/50'
+                  ? 'bg-gradient-to-br from-[#172033] to-[#0F172A] border-emerald-500/30' 
+                  : 'bg-white border-emerald-200/50'
               }`}
             >
               <div className={`absolute -right-12 -bottom-12 w-32 h-32 rounded-full blur-2xl group-hover:opacity-15 transition-all pointer-events-none ${isDarkMode ? 'bg-[#f59e0b]/10' : 'bg-blue-500/5'}`} />
@@ -470,12 +470,12 @@ export function StoreFront() {
                 </div>
               </div>
 
-              <button className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transform group-hover:scale-105 transition-all duration-300 outline-none ${
+              <button className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-300 outline-none hover:scale-110 active:scale-95 animate-neon-green-pulse ${
                 isDarkMode 
-                  ? 'bg-[#3B82F6] hover:bg-[#2563EB] text-[#0B1220] hover:text-white border-[#3B82F6]/40 shadow-[0_0_20px_rgba(59,130,246,0.5)]' 
-                  : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-500/20 shadow-md shadow-blue-500/10'
+                  ? 'bg-gradient-to-tr from-emerald-500 to-green-400 border-emerald-400/50 text-[#070C18]' 
+                  : 'bg-gradient-to-tr from-emerald-600 to-green-500 border-emerald-500/25 text-white'
               }`}>
-                <Play size={16} className="fill-current ml-0.5" />
+                <Play size={17} className="fill-current ml-0.5" strokeWidth={2.5} />
               </button>
             </motion.div>
           </section>
@@ -491,10 +491,10 @@ export function StoreFront() {
                 <div 
                   key={g.id}
                   onClick={() => handleCardClick(g.action)}
-                  className={`border rounded-[20px] p-3.5 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[155px] active:scale-[0.96] group relative overflow-hidden animate-neon-blue-green ${
+                  className={`border rounded-[20px] p-3.5 cursor-pointer transition-all duration-300 flex flex-col justify-between h-[155px] active:scale-[0.96] group relative overflow-hidden animate-neon-green-pulse ${
                     isDarkMode 
-                      ? 'bg-[#172033]/70 hover:bg-[#172033] border-[#3B82F6]/30 text-white' 
-                      : 'bg-white hover:bg-slate-50 border-blue-200/50 text-slate-800 shadow-[0_8px_20px_rgba(0,0,0,0.02)]'
+                      ? 'bg-[#172033]/70 hover:bg-[#172033] border-emerald-500/30 text-white' 
+                      : 'bg-white hover:bg-slate-50 border-emerald-200/50 text-slate-800 shadow-[0_8px_20px_rgba(0,0,0,0.02)]'
                   }`}
                 >
                   <div className={`absolute top-2 right-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded scale-90 z-10 border transition-all duration-500 ${
@@ -522,8 +522,12 @@ export function StoreFront() {
                   </div>
 
                   <div className="flex justify-end pt-1">
-                    <span className={`text-[10px] font-bold group-hover:underline flex items-center gap-0.5 transition-colors duration-500 ${isDarkMode ? 'text-[#3B82F6]' : 'text-blue-600'}`}>
-                      Jogar <ChevronRight size={10} strokeWidth={3} />
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all duration-300 ${
+                      isDarkMode 
+                        ? 'bg-gradient-to-r from-emerald-500/20 to-green-400/15 text-[#4ADE80] border border-emerald-500/30 shadow-[0_0_12px_rgba(34,197,94,0.15)] group-hover:animate-neon-green-pulse' 
+                        : 'bg-emerald-50 text-emerald-700 border border-emerald-250/50 shadow-sm group-hover:animate-neon-green-pulse'
+                    }`}>
+                      Jogar <ChevronRight size={10} strokeWidth={3} className="text-emerald-400" />
                     </span>
                   </div>
                 </div>
@@ -601,7 +605,7 @@ export function StoreFront() {
                   key={item.id}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleCardClick(item.id)}
-                  className={`bg-gradient-to-r ${isDarkMode ? item.colorDark : item.colorLight} border p-3.5 rounded-2xl cursor-pointer hover:scale-[1.01] transition-all duration-500 flex items-center justify-between gap-4 animate-neon-blue-green`}
+                  className={`bg-gradient-to-r ${isDarkMode ? item.colorDark : item.colorLight} border p-3.5 rounded-2xl cursor-pointer hover:scale-[1.01] transition-all duration-500 flex items-center justify-between gap-4 group hover:animate-neon-green-pulse`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img 
@@ -619,10 +623,10 @@ export function StoreFront() {
                       <p className={`${getFontSizeCls('text-[11px]')} font-semibold leading-relaxed truncate transition-colors duration-500 ${isDarkMode ? 'text-[#94A3B8]' : 'text-slate-500'}`}>{item.subtitle}</p>
                     </div>
                   </div>
-                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-500 ${
-                    isDarkMode ? 'bg-white/5 border-white/5 text-white hover:bg-white/10' : 'bg-slate-50 border-slate-200/60 text-slate-400 hover:bg-slate-100'
+                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 active:scale-95 group-hover:animate-neon-green-pulse ${
+                    isDarkMode ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' : 'bg-emerald-50 border-emerald-250 text-emerald-600 hover:bg-emerald-100'
                   }`}>
-                    <ChevronRight size={14} />
+                    <ChevronRight size={13} strokeWidth={3} />
                   </div>
                 </motion.div>
               ))}
@@ -693,10 +697,10 @@ export function StoreFront() {
             <motion.div 
               whileTap={{ scale: 0.98 }}
               onClick={() => showToast('Recompensa Diária de +50 moedas coletada!')}
-              className={`relative overflow-hidden border rounded-[24px] p-5 flex items-center justify-between cursor-pointer group shadow-lg transition-all duration-500 animate-neon-blue-green ${
+              className={`relative overflow-hidden border rounded-[24px] p-5 flex items-center justify-between cursor-pointer group shadow-lg transition-all duration-500 animate-neon-green-pulse ${
                 isDarkMode 
-                  ? 'bg-gradient-to-r from-emerald-600/20 to-[#172033]/60 border-[#3B82F6]/30 shadow-emerald-950/20' 
-                  : 'bg-gradient-to-r from-emerald-50/50 to-white border-blue-200/50 shadow-[0_8px_24px_rgba(16,185,129,0.04)]'
+                  ? 'bg-gradient-to-r from-emerald-600/20 to-[#172033]/60 border-emerald-500/30 shadow-emerald-950/20' 
+                  : 'bg-gradient-to-r from-emerald-50/50 to-white border-emerald-200/50 shadow-[0_8px_24px_rgba(16,185,129,0.04)]'
               }`}
             >
               <div className="absolute top-[-10px] right-[-10px] w-16 h-16 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
@@ -715,7 +719,7 @@ export function StoreFront() {
                 </div>
               </div>
               
-              <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs tracking-wider z-10 transition-all duration-300 shadow-md shadow-emerald-500/10 active:scale-95">
+              <span className="px-3.5 py-1.5 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 text-[#070C18] font-black text-xs tracking-wider z-10 transition-all duration-300 shadow-md shadow-emerald-500/10 active:scale-95 animate-neon-green-pulse border border-emerald-300/30">
                 Coletar
               </span>
             </motion.div>

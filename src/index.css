@@ -147,11 +147,25 @@ button:hover {
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.38);
 }
 
-/* Eradicate any browser focus shapes, tap highlights, or default cyan-blue outlines on interactive components */
-canvas, button, [tabindex], .animate-neon-blue-green {
+/* Eradicate any browser focus shapes, tap highlights, or default outlines on interactive components */
+canvas, button, [tabindex] {
   outline: none !important;
-  box-shadow: none !important;
   -webkit-tap-highlight-color: transparent !important;
+}
+
+@keyframes neon-green-pulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.4), inset 0 0 2px rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(34, 197, 94, 0.85), 0 0 38px rgba(34, 197, 94, 0.45), inset 0 0 8px rgba(34, 197, 94, 0.3);
+    border-color: rgba(74, 222, 128, 0.85);
+  }
+}
+
+.animate-neon-green-pulse {
+  animation: neon-green-pulse 2.2s ease-in-out infinite !important;
 }
 
 /* Preserve shadows strictly on custom classes safely */
