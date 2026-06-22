@@ -18,7 +18,7 @@ export function Plan() {
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-black transition-colors duration-300">
-      <header className="flex items-center px-4 h-16 border-b border-gray-100 dark:border-slate-800 shrink-0 sticky top-0 bg-white/95 dark:bg-black/95 backdrop-blur-sm z-10 transition-colors duration-300 shadow-sm">
+      <header className="flex items-center px-4 h-16 border-b border-gray-100 dark:border-slate-800 shrink-0 sticky top-0 bg-white/60 dark:bg-black/65 backdrop-blur-xl z-10 transition-colors duration-300 shadow-sm">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-black dark:text-white rounded-full hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors">
           <ArrowLeft size={24} />
         </button>

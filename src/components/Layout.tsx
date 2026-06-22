@@ -11,7 +11,7 @@ export function Layout() {
   useEffect(() => {
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', '#0B1220');
+      metaThemeColor.setAttribute('content', isDarkMode ? '#0B1220' : '#F8FAFC');
     }
   }, [isDarkMode]);
 
@@ -35,7 +35,11 @@ export function Layout() {
       {/* Floating Bottom Nav */}
       <div className="absolute bottom-6 left-4 right-4 z-50 pointer-events-none pb-safe max-w-md mx-auto w-[calc(100%-32px)]">
         {/* Glow & Backdrop container */}
-        <div className="relative pointer-events-auto rounded-[30px] p-[1.5px] bg-gradient-to-r from-emerald-500/15 via-blue-500/25 to-purple-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_24px_rgba(34,197,94,0.06)]">
+        <div className={`relative pointer-events-auto rounded-[30px] p-[1.5px] bg-gradient-to-r transition-all duration-500 ${
+          isDarkMode 
+            ? 'from-emerald-500/15 via-blue-500/25 to-purple-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_24px_rgba(34,197,94,0.06)]' 
+            : 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 shadow-[0_12px_32px_rgba(16,185,129,0.08),0_0_16px_rgba(16,185,129,0.04)] border border-emerald-500/5'
+        }`}>
           
           {/* Seamless sliding active green bubble wrapper (Moved OUTSIDE overflow-hidden for infinite upward overflow!) */}
           <motion.div
@@ -44,21 +48,31 @@ export function Layout() {
             transition={{ type: 'spring', stiffness: 360, damping: 29 }}
           >
             {/* Dynamic glowing neon green button following the mockup */}
-            <div className="w-[52px] h-[52px] rounded-full bg-gradient-to-tr from-emerald-400 via-green-400 to-[#86EFAC] text-[#070C18] flex items-center justify-center shadow-[0_12px_28px_rgba(34,197,94,0.5),0_0_15px_rgba(34,197,94,0.3)] border-[2.5px] border-[#070C18] relative group">
+            <div className={`w-[52px] h-[52px] rounded-full bg-gradient-to-tr from-emerald-400 via-green-400 to-[#86EFAC] text-[#070C18] flex items-center justify-center shadow-[0_12px_28px_rgba(34,197,94,0.5),0_0_15px_rgba(34,197,94,0.3)] border-[2.5px] transition-all duration-500 relative group ${
+              isDarkMode ? 'border-[#070C18]' : 'border-white'
+            }`}>
               <div className="absolute inset-0 rounded-full bg-white/25 opacity-0 group-hover:opacity-100 transition-opacity" />
               {tabs[activeIndex].icon}
             </div>
 
             {/* Premium boundless soft glowing ambient neon aura following the active button */}
-            <div className="absolute w-[95px] h-[95px] top-[-10px] rounded-full bg-gradient-to-tr from-emerald-500/40 to-green-400/20 blur-[26px] pointer-events-none -z-10" />
+            <div className={`absolute w-[95px] h-[95px] top-[-10px] rounded-full bg-gradient-to-tr from-emerald-500/40 to-green-400/20 blur-[26px] pointer-events-none -z-10 ${
+              isDarkMode ? 'opacity-100' : 'opacity-60'
+            }`} />
           </motion.div>
 
-          <div className="relative z-10 h-[78px] rounded-[29px] overflow-hidden bg-[#070C18]/60 backdrop-blur-3xl">
+          <div className={`relative z-10 h-[78px] rounded-[29px] overflow-hidden backdrop-blur-[24px] transition-colors duration-500 ${
+            isDarkMode 
+              ? 'bg-[#070C18]/30' 
+              : 'bg-white/45'
+          }`}>
             {/* SVG Background with animated scoop cutout path */}
             <div className="absolute inset-0 pointer-events-none">
               <svg 
                 viewBox="0 0 500 80" 
-                className="absolute inset-0 w-full h-full text-[#080E1C]/80 fill-current" 
+                className={`absolute inset-0 w-full h-full fill-current transition-colors duration-500 ${
+                  isDarkMode ? 'text-[#080E1C]/45' : 'text-white/40'
+                }`}
                 preserveAspectRatio="none"
               >
                 <defs>
@@ -105,7 +119,9 @@ export function Layout() {
                       className={`flex flex-col items-center gap-1 transition-all duration-300 ${
                         isActive 
                           ? 'opacity-0 scale-50 pointer-events-none translate-y-[-20px]' 
-                          : 'text-[#8598B0] hover:text-white hover:scale-105 active:scale-90'
+                          : isDarkMode 
+                            ? 'text-[#8598B0] hover:text-white hover:scale-105 active:scale-90'
+                            : 'text-slate-400 hover:text-teal-600 hover:scale-105 active:scale-90'
                       }`}
                     >
                       {tab.icon}
@@ -120,7 +136,9 @@ export function Layout() {
                         transition={{ delay: 0.05, duration: 0.2 }}
                         className="flex flex-col items-center h-[18px] justify-center mt-auto"
                       >
-                        <span className="text-[10px] uppercase font-black tracking-widest text-[#4ADE80] drop-shadow-[0_0_8px_rgba(34,197,94,0.45)]">
+                        <span className={`text-[10px] uppercase font-black tracking-widest drop-shadow-[0_0_8px_rgba(34,197,94,0.35)] transition-colors ${
+                          isDarkMode ? 'text-[#4ADE80]' : 'text-emerald-600'
+                        }`}>
                           {tab.label}
                         </span>
                       </motion.div>

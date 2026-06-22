@@ -1,11 +1,13 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useBible } from '../context/BibleContext';
-import { ArrowLeft, BookOpen } from 'lucide-react';
+import { ArrowLeft, BookOpen, Sun, Moon } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
 
 export function Book() {
   const { abbrev } = useParams<{ abbrev: string }>();
   const { books } = useBible();
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useAppStore();
 
   const book = books.find(b => b.abbrev === abbrev);
 
@@ -13,10 +15,24 @@ export function Book() {
 
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0B1220] transition-colors duration-300 text-slate-800 dark:text-white">
-      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-emerald-500/10 shrink-0 sticky top-0 bg-white/95 dark:bg-[#0B1220]/95 backdrop-blur-md z-10 transition-colors duration-300 shadow-sm">
-        <button onClick={() => navigate(-1)} className="self-start p-2 -ml-2 mb-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#152e24] hover:text-emerald-400 rounded-full transition-colors active:scale-95">
-          <ArrowLeft size={24} />
-        </button>
+      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-emerald-500/10 shrink-0 sticky top-0 bg-white/60 dark:bg-[#0B1220]/65 backdrop-blur-xl z-10 transition-colors duration-300 shadow-sm">
+        <div className="flex items-center justify-between mb-2">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#152e24] hover:text-emerald-400 rounded-full transition-colors active:scale-95">
+            <ArrowLeft size={24} />
+          </button>
+          
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full border transition-all active:scale-95 ${
+              isDarkMode 
+                ? 'bg-[#172033] text-emerald-400 border-emerald-500/20 hover:bg-[#152e24]/80 shadow-md' 
+                : 'bg-white text-emerald-600 border-emerald-300/40 hover:bg-emerald-50 shadow-sm'
+            }`}
+            aria-label="Alternar Tema"
+          >
+            {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+        </div>
         <div className="flex items-center gap-4">
            <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-[#121B30]/90 flex items-center justify-center text-slate-700 dark:text-emerald-400 shrink-0 border border-gray-200 dark:border-emerald-500/35 shadow-sm animate-neon-green-pulse-soft">
              <BookOpen size={20} />
