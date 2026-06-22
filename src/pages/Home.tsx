@@ -41,7 +41,7 @@ export function Home() {
   return (
     <div className={`flex flex-col h-full transition-colors duration-500 ${isDarkMode ? 'bg-[#0B1220] text-white' : 'bg-slate-50 text-slate-800'}`}>
       {/* Premium Dashboard Header inside Bible Section */}
-      <header className={`px-6 pt-10 pb-6 sticky top-0 z-20 backdrop-blur-xl border-b transition-colors duration-500 ${isDarkMode ? 'bg-[#0B1220]/65 border-white/5' : 'bg-white/60 border-slate-200/80 shadow-sm'}`}>
+      <header className={`px-6 pt-10 pb-6 sticky top-0 z-20 backdrop-blur-xl border-b transition-colors duration-500 ${isDarkMode ? 'bg-[#0B1220]/45 border-white/5' : 'bg-white/45 border-slate-200/80 shadow-sm'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button 

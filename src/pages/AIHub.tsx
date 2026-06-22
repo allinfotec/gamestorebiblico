@@ -44,8 +44,8 @@ export function AIHub() {
     <div className={`flex flex-col h-full transition-colors duration-300 ${isDarkMode ? 'bg-[#0B1220] text-white' : 'bg-slate-50 text-slate-800'}`}>
       <header className={`px-6 pt-10 pb-8 shrink-0 backdrop-blur-xl border-b rounded-b-[32px] relative overflow-hidden transition-colors duration-300 ${
         isDarkMode 
-          ? 'bg-[#172033]/90 border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.35)]' 
-          : 'bg-white/95 border-slate-200/60 shadow-sm'
+          ? 'bg-[#172033]/45 border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.25)]' 
+          : 'bg-white/45 border-slate-200/60 shadow-sm'
       }`}>
         <div className="absolute top-[-30px] left-[-30px] w-24 h-24 rounded-full bg-emerald-500/10 blur-xl pointer-events-none"></div>
         <h1 className={`text-2xl font-extrabold tracking-tight flex items-center gap-3 mb-2 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>

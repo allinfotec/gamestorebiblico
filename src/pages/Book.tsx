@@ -15,7 +15,7 @@ export function Book() {
 
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0B1220] transition-colors duration-300 text-slate-800 dark:text-white">
-      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-emerald-500/10 shrink-0 sticky top-0 bg-white/60 dark:bg-[#0B1220]/65 backdrop-blur-xl z-10 transition-colors duration-300 shadow-sm">
+      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-emerald-500/10 shrink-0 sticky top-0 bg-white/45 dark:bg-[#0B1220]/45 backdrop-blur-xl z-10 transition-colors duration-300 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#152e24] hover:text-emerald-400 rounded-full transition-colors active:scale-95">
             <ArrowLeft size={24} />

@@ -219,7 +219,7 @@ export function Reader() {
       )}
 
       {/* Header */}
-      <header className="flex items-center justify-between px-4 h-16 border-b border-gray-100 dark:border-slate-800 bg-white/60 dark:bg-black/65 backdrop-blur-xl sticky top-0 z-20 shrink-0 transition-colors duration-300 shadow-sm">
+      <header className="flex items-center justify-between px-4 h-16 border-b border-gray-100 dark:border-slate-800 bg-white/45 dark:bg-black/45 backdrop-blur-xl sticky top-0 z-20 shrink-0 transition-colors duration-300 shadow-sm">
         <button onClick={() => navigate(`/bible/book/${abbrev}`)} className="p-2 -ml-2 text-black dark:text-white rounded-full hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors">
           <ArrowLeft size={24} />
         </button>

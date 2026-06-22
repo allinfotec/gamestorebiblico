@@ -42,7 +42,7 @@ export function Search() {
 
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0B1220] transition-colors duration-300 text-slate-800 dark:text-white">
-      <header className="px-6 pt-10 pb-6 bg-white/60 dark:bg-[#0B1220]/65 backdrop-blur-xl sticky top-0 z-10 shrink-0 border-b border-slate-100 dark:border-emerald-500/10 shadow-sm transition-colors duration-300">
+      <header className="px-6 pt-10 pb-6 bg-white/45 dark:bg-[#0B1220]/45 backdrop-blur-xl sticky top-0 z-10 shrink-0 border-b border-slate-100 dark:border-emerald-500/10 shadow-sm transition-colors duration-300">
         <h1 className="text-2xl font-sans font-black tracking-tight text-slate-800 dark:text-white mb-4">Buscar</h1>
         <div className="relative">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#94A3B8]" size={18} />

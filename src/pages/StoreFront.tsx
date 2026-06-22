@@ -262,7 +262,7 @@ export function StoreFront() {
     } else if (action === 'ai-hub') {
       navigate('/bible/ai-hub');
     } else if (action === 'quiz') {
-      navigate('/bible/ai-hub');
+      navigate('/bible/quiz');
     } else if (action.startsWith('http')) {
       window.location.href = action;
     } else {

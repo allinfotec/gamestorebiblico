@@ -23,17 +23,20 @@ export function Layout() {
   else if (path.startsWith('/bible/ai-hub')) activeIndex = 4;
   else if (path.startsWith('/bible')) activeIndex = 1;
 
+  const showBottomNav = !path.includes('/quiz');
+
   return (
     <div className="mx-auto w-full h-screen bg-brand-bg text-text-main flex flex-col overflow-hidden relative shadow-2xl safe-area-bottom">
       {/* Content */}
       <main className="flex-1 overflow-y-auto relative z-0 no-scrollbar">
         <Outlet />
         {/* Spacer text to not get hidden behind floating pill */}
-        <div className="h-[105px] shrink-0 w-full pointer-events-none" />
+        {showBottomNav && <div className="h-[105px] shrink-0 w-full pointer-events-none" />}
       </main>
 
       {/* Floating Bottom Nav */}
-      <div className="absolute bottom-6 left-4 right-4 z-50 pointer-events-none pb-safe max-w-md mx-auto w-[calc(100%-32px)]">
+      {showBottomNav && (
+        <div className="absolute bottom-6 left-4 right-4 z-50 pointer-events-none pb-safe max-w-md mx-auto w-[calc(100%-32px)]">
         {/* Glow & Backdrop container */}
         <div className={`relative pointer-events-auto rounded-[30px] p-[1.5px] bg-gradient-to-r transition-all duration-500 ${
           isDarkMode 
@@ -151,6 +154,7 @@ export function Layout() {
 
         </div>
       </div>
+      )}
     </div>
   );
 }

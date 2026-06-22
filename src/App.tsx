@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { BibleProvider } from './context/BibleContext';
 import { useAppStore } from './store/useAppStore';
 import { useCacaPalavrasStore } from './store/useCacaPalavrasStore';
+import { useQuizStore } from './store/useQuizStore';
 
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
@@ -17,16 +18,18 @@ import { StoreFront } from './pages/StoreFront';
 import { WordOfTheDay } from './pages/WordOfTheDay';
 import { CacaPalavras } from './pages/CacaPalavras';
 import { KingDavidGame } from './pages/KingDavidGame';
+import { QuizScreen } from './pages/QuizScreen';
 
 export default function App() {
   const { hydrate: hydrateApp } = useAppStore();
   const { hydrate: hydrateCacaPalavras } = useCacaPalavrasStore();
+  const { hydrate: hydrateQuiz } = useQuizStore();
   const [isHydrated, setIsHydrated] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    Promise.all([hydrateApp(), hydrateCacaPalavras()]).then(() => setIsHydrated(true));
-  }, [hydrateApp, hydrateCacaPalavras]);
+    Promise.all([hydrateApp(), hydrateCacaPalavras(), hydrateQuiz()]).then(() => setIsHydrated(true));
+  }, [hydrateApp, hydrateCacaPalavras, hydrateQuiz]);
 
   // Show splash screen while hydrating or animating
   if (showSplash) {
@@ -55,6 +58,7 @@ export default function App() {
             <Route path="favorites" element={<Favorites />} />
             <Route path="ai-hub" element={<AIHub />} />
             <Route path="plan" element={<Plan />} />
+            <Route path="quiz" element={<QuizScreen />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" />} />

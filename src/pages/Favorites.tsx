@@ -8,7 +8,7 @@ export function Favorites() {
 
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0B1220] transition-colors duration-300 text-slate-800 dark:text-white">
-      <header className="px-6 pt-10 pb-6 shrink-0 bg-white/60 dark:bg-[#0B1220]/65 backdrop-blur-xl sticky top-0 z-10 border-b border-slate-100 dark:border-emerald-500/10 shadow-sm transition-colors duration-300">
+      <header className="px-6 pt-10 pb-6 shrink-0 bg-white/45 dark:bg-[#0B1220]/45 backdrop-blur-xl sticky top-0 z-10 border-b border-slate-100 dark:border-emerald-500/10 shadow-sm transition-colors duration-300">
         <h1 className="text-2xl font-sans font-black flex items-center gap-2 tracking-tight text-slate-800 dark:text-white">
           Favoritos
         </h1>
