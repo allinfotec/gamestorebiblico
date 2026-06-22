@@ -46,7 +46,7 @@ export function Home() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/')} 
-              className="flex items-center justify-center w-11 h-11 rounded-full bg-[#172033] text-white hover:text-[#3B82F6] hover:bg-[#172033]/80 transition-all border border-white/10 active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+              className="flex items-center justify-center w-11 h-11 rounded-full bg-[#172033] text-white hover:text-emerald-400 hover:bg-[#152e24]/80 transition-all border border-emerald-500/20 active:scale-95 hover:animate-neon-green-pulse-soft"
               aria-label="Voltar para Menu Principal"
             >
               <LayoutGrid size={18} />
@@ -62,7 +62,7 @@ export function Home() {
             <div className="relative">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex items-center justify-center min-w-[4.5rem] px-3 py-2 rounded-full bg-[#172033] hover:bg-white/5 text-white font-extrabold text-xs uppercase tracking-wider transition-all border border-white/10 shadow-md"
+                className="flex items-center justify-center min-w-[4.5rem] px-3 py-2 rounded-full bg-[#172033] hover:bg-[#152e24]/80 text-white hover:text-emerald-400 font-extrabold text-xs uppercase tracking-wider transition-all border border-emerald-500/20 active:scale-95 hover:animate-neon-green-pulse-soft"
               >
                 {version}
                 <ChevronDown size={14} className="ml-1 opacity-60" />
@@ -111,16 +111,18 @@ export function Home() {
         {/* Reading Plan Card Banner */}
         <div className="pt-4">
           <Link to="/bible/plan" className="block group">
-            <div className="bg-[#172033] hover:bg-[#172033]/90 border border-white/10 rounded-[24px] p-6 shadow-[0_4px_25px_rgba(0,0,0,0.15)] relative overflow-hidden active:scale-[0.98] transition-all duration-300">
-               <div className="absolute right-[-20px] top-[-20px] w-32 h-32 rounded-full bg-[#3B82F6]/5 blur-xl pointer-events-none"></div>
-               <div className="text-[9px] uppercase opacity-70 mb-1.5 font-black tracking-[0.2em] text-[#3B82F6]">Plano de Leitura</div>
-               <div className="text-xl font-black mb-4 text-white">Essência da Bíblia</div>
+            <div className="bg-[#172033]/85 hover:bg-[#172033] border border-emerald-500/20 rounded-[24px] p-6 relative overflow-hidden active:scale-[0.98] transition-all duration-300 animate-neon-green-pulse-soft">
+               <div className="absolute right-[-20px] top-[-20px] w-32 h-32 rounded-full bg-emerald-500/5 blur-xl pointer-events-none"></div>
+               <div className="text-[9px] uppercase opacity-90 mb-1.5 font-black tracking-[0.2em] text-emerald-400">Plano de Leitura</div>
+               <div className="text-xl font-black mb-4 text-white flex items-center gap-2">
+                 Essência da Bíblia <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-extrabold animate-pulse">Ativo</span>
+               </div>
                <div className="flex items-center justify-between text-xs mb-2.5">
                  <span className="font-bold text-[#94A3B8]">Dia {Math.min(completedDays + 1, 30)} de 30</span>
-                 <span className="font-black text-[#3B82F6]">{progressPercent}%</span>
+                 <span className="font-black text-emerald-500">{progressPercent}%</span>
                </div>
                <div className="h-2 bg-[#0B1220] rounded-full overflow-hidden">
-                 <div className="h-full bg-gradient-to-r from-[#3B82F6] to-[#F59E0B] transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
+                 <div className="h-full bg-gradient-to-r from-emerald-500 to-[#F59E0B] transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
                </div>
             </div>
           </Link>
@@ -129,18 +131,19 @@ export function Home() {
         {/* Antigo Testamento Section */}
         <section>
           <div className="flex items-center gap-2 mb-4 px-1">
-            <div className="w-1.5 h-6 rounded-full bg-[#F59E0B]"></div>
+            <div className="w-1.5 h-6 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
             <h2 className="text-md uppercase font-black tracking-[0.1em] text-white">Antigo Testamento</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
             {vtBooks.map(book => (
-              <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block">
+              <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block group">
                 <motion.div 
                   whileTap={{ scale: 0.96 }} 
-                  className="h-full p-4.5 flex flex-col justify-between bg-[#172033]/80 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[18px] shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_25px_rgba(59,130,246,0.1)] transition-all duration-300 active:scale-95 text-white"
+                  className="h-full relative overflow-hidden pl-5 pr-4.5 py-4.5 flex flex-col justify-between bg-gradient-to-br from-[#121B30]/95 to-[#0D1527] border border-emerald-500/20 hover:border-emerald-400/50 rounded-[18px] shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-500 active:scale-95 text-white animate-neon-green-pulse-soft group"
                 >
-                  <h3 className="font-sans text-[15px] font-extrabold mb-1.5 group-hover:text-[#3B82F6] transition-colors">{book.name}</h3>
-                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#94A3B8]">{book.chapters.length} Capítulos</span>
+                  <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-emerald-400 to-emerald-600/80 group-hover:from-emerald-300 group-hover:to-emerald-500 transition-all shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
+                  <h3 className="font-sans text-[14px] font-extrabold mb-1.5 group-hover:text-emerald-400 text-white/95 transition-colors uppercase tracking-tight">{book.name}</h3>
+                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#94A3B8] group-hover:text-emerald-400/90 transition-colors">{book.chapters.length} Capítulos</span>
                 </motion.div>
               </Link>
             ))}
@@ -150,18 +153,19 @@ export function Home() {
         {/* Novo Testamento Section */}
         <section>
           <div className="flex items-center gap-2 mb-4 px-1">
-            <div className="w-1.5 h-6 rounded-full bg-[#3B82F6]"></div>
+            <div className="w-1.5 h-6 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
             <h2 className="text-md uppercase font-black tracking-[0.1em] text-white">Novo Testamento</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
             {ntBooks.map(book => (
-              <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block">
+              <Link key={book.abbrev} to={`/bible/book/${book.abbrev}`} className="block group">
                 <motion.div 
                   whileTap={{ scale: 0.96 }} 
-                  className="h-full p-4.5 flex flex-col justify-between bg-[#172033]/80 hover:bg-[#172033] border border-white/10 hover:border-[#3B82F6]/30 rounded-[18px] shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_25px_rgba(59,130,246,0.1)] transition-all duration-300 active:scale-95 text-white"
+                  className="h-full relative overflow-hidden pl-5 pr-4.5 py-4.5 flex flex-col justify-between bg-gradient-to-br from-[#121B30]/95 to-[#0D1527] border border-emerald-500/20 hover:border-emerald-400/50 rounded-[18px] shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-500 active:scale-95 text-white animate-neon-green-pulse-soft group"
                 >
-                  <h3 className="font-sans text-[15px] font-extrabold mb-1.5 group-hover:text-[#3B82F6] transition-colors">{book.name}</h3>
-                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#94A3B8]">{book.chapters.length} Capítulos</span>
+                  <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-emerald-400 to-emerald-600/80 group-hover:from-emerald-300 group-hover:to-emerald-500 transition-all shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
+                  <h3 className="font-sans text-[14px] font-extrabold mb-1.5 group-hover:text-emerald-400 text-white/95 transition-colors uppercase tracking-tight">{book.name}</h3>
+                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#94A3B8] group-hover:text-emerald-400/90 transition-colors">{book.chapters.length} Capítulos</span>
                 </motion.div>
               </Link>
             ))}

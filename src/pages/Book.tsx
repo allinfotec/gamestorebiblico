@@ -12,45 +12,46 @@ export function Book() {
   if (!book) return null;
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-black transition-colors duration-300">
-      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-slate-800 shrink-0 sticky top-0 bg-white/95 dark:bg-black/95 backdrop-blur-sm z-10 transition-colors duration-300 shadow-sm">
-        <button onClick={() => navigate(-1)} className="self-start p-2 -ml-2 mb-2 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-slate-900 rounded-full transition-colors">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0B1220] transition-colors duration-300 text-slate-800 dark:text-white">
+      <header className="flex flex-col px-6 pt-6 pb-4 border-b border-gray-100 dark:border-emerald-500/10 shrink-0 sticky top-0 bg-white/95 dark:bg-[#0B1220]/95 backdrop-blur-md z-10 transition-colors duration-300 shadow-sm">
+        <button onClick={() => navigate(-1)} className="self-start p-2 -ml-2 mb-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#152e24] hover:text-emerald-400 rounded-full transition-colors active:scale-95">
           <ArrowLeft size={24} />
         </button>
         <div className="flex items-center gap-4">
-           <div className="w-12 h-12 rounded-full bg-white dark:bg-black flex items-center justify-center text-black dark:text-white shrink-0 border border-gray-200 dark:border-slate-800 shadow-sm">
+           <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-[#121B30]/90 flex items-center justify-center text-slate-700 dark:text-emerald-400 shrink-0 border border-gray-200 dark:border-emerald-500/35 shadow-sm animate-neon-green-pulse-soft">
              <BookOpen size={20} />
            </div>
            <div>
-             <h1 className="text-3xl font-serif font-bold text-black dark:text-white leading-tight flex items-center gap-2">
+             <h1 className="text-3xl font-serif font-black text-slate-800 dark:text-white leading-tight flex items-center gap-2 tracking-tight">
                {book.name}
              </h1>
-             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 tracking-[0.15em] uppercase mt-1">
+             <p className="text-xs font-black text-slate-500 dark:text-emerald-400 tracking-[0.15em] uppercase mt-1">
                {book.chapters.length} Capítulos
              </p>
            </div>
-        </div>
+         </div>
       </header>
 
       <div className="flex-1 overflow-y-auto px-5 py-6">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3.5">
           {book.chapters.map((verses, index) => {
             const chapterNum = index + 1;
             const versesCount = verses.length;
             
             return (
-              <Link key={chapterNum} to={`/bible/read/${book.abbrev}/${chapterNum}`} className="block">
-                <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgb(0,0,0,0.2)] active:scale-[0.98] hover:shadow-[0_8px_20px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_20px_rgb(0,0,0,0.3)] transition-all duration-300 text-black dark:text-white group">
+              <Link key={chapterNum} to={`/bible/read/${book.abbrev}/${chapterNum}`} className="block group">
+                <div className="flex items-center justify-between p-4 bg-white dark:bg-[#121B30]/90 rounded-2xl border border-gray-100 dark:border-emerald-500/20 active:scale-[0.98] transition-all duration-500 text-slate-800 dark:text-white dark:hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(52,211,153,0.15)] animate-neon-green-pulse-soft relative overflow-hidden pl-6">
+                  <div className="absolute left-0 top-0 bottom-0 w-[4.5px] bg-gradient-to-b from-emerald-400 to-emerald-600/90 group-hover:from-emerald-300 group-hover:to-emerald-500 transition-all shadow-[0_0_8px_rgba(52,211,153,0.55)]"></div>
                   <div className="flex items-center gap-4">
-                     <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-slate-800 flex items-center justify-center font-serif text-lg font-bold group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors duration-300">
+                     <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-[#0B1220] border border-gray-200 dark:border-emerald-500/30 flex items-center justify-center font-serif text-lg font-black group-hover:bg-emerald-500 group-hover:text-[#0C1221] dark:group-hover:bg-emerald-400 dark:group-hover:text-[#0B1220] group-hover:border-emerald-400 transition-colors duration-300 shadow-sm shrink-0">
                        {chapterNum}
                      </div>
                      <div>
-                       <h3 className="font-sans text-[15px] font-bold">Capítulo {chapterNum}</h3>
-                       <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{versesCount} versículos</p>
+                       <h3 className="font-sans text-[15.5px] font-extrabold group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">Capítulo {chapterNum}</h3>
+                       <p className="text-xs font-bold text-gray-400 dark:text-emerald-400/80 mt-0.5">{versesCount} versículos</p>
                      </div>
                   </div>
-                  <div className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-gray-400">
+                  <div className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-emerald-500 dark:text-emerald-400 shrink-0">
                     <ArrowLeft size={20} className="rotate-180 inline-block" />
                   </div>
                 </div>
